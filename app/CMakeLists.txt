@@ -1,50 +1,47 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(app VERSION 0.1 LANGUAGES CXX)
+project(WordSwipe VERSION 0.1 LANGUAGES CXX)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-
+# Set the C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick)
+# Find Qt libraries
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Sql)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Sql)
 
+# Define source files
 set(PROJECT_SOURCES
-        main.cpp
-        qml.qrc
+    main.cpp
+    main.qml
+    qml.qrc
+    models/folder.h
+    models/module.h
+    models/card.h
+    utils/database.cpp
+    utils/database.h
+    utils/exportimport.cpp
+    utils/exportimport.h
 )
 
+# Define executable
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(app
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET app APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else()
-    if(ANDROID)
-        add_library(app SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(app
-          ${PROJECT_SOURCES}
-        )
-    endif()
+    add_executable(app
+        ${PROJECT_SOURCES}
+    )
 endif()
 
+# Link Qt libraries
 target_link_libraries(app
-  PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick)
+    PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Sql
+)
 
+# Set properties for macOS and Windows
 set_target_properties(app PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
@@ -53,10 +50,13 @@ set_target_properties(app PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
+# Install targets
 install(TARGETS app
     BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
 
+# Finalize the executable for Qt 6
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_import_qml_plugins(app)
     qt_finalize_executable(app)
