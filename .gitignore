@@ -1,0 +1,24 @@
+# Qt Creator build directory
+build-*/
+
+# User-specific files
+*.user
+*.pro.user
+*.pro.user.*
+
+# Qt Creator
+*.qmlproject.user
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+
+# Other
+*.log
+*.tmp
+*.swp
+
+*DS_Store
