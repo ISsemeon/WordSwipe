@@ -1,15 +1,29 @@
 #pragma once
 
+#include <QObject>
 #include <QString>
 #include <QList>
 
-/**
- * @brief Represents a folder containing modules.
- */
-class Folder {
+class Module;  // Forward declaration
+
+class Folder : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QList<QObject*> modules READ modules NOTIFY modulesChanged)
+
 public:
-    int id;                 // Unique identifier for the folder
-    QString name;           // Name of the folder
-    QString color;          // Color associated with the folder
-    QList<int> moduleIds;   // List of module IDs associated with this folder
+    explicit Folder(QObject *parent = nullptr);
+
+    QString name() const;
+    void setName(const QString &name);
+
+    QList<QObject*> modules() const;
+
+signals:
+    void nameChanged();
+    void modulesChanged();
+
+private:
+    QString m_name;
+    QList<QObject*> m_modules;
 };

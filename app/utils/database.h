@@ -1,16 +1,18 @@
 #pragma once
 
 #include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
 
-/**
- * @brief Handles database operations.
- */
 class Database {
 public:
-    Database();
+    Database(const QString &path);
+    ~Database();
+
+    bool open();
+    void close();
+    QSqlQuery execQuery(const QString &queryStr);
 
 private:
     QSqlDatabase db;
-
-    void setupTables();
 };

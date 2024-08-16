@@ -2,39 +2,32 @@
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QDebug>
 
-/**
- * @brief Exports data to a JSON file.
- * @param filePath Path to the file where data will be exported.
- */
-void exportData(const QString &filePath) {
+bool ExportImport::exportToJson(const QString &filePath) {
+    // Implement export logic to JSON
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly)) {
-        qDebug() << "Failed to open file for writing:" << file.errorString();
-        return;
+        return false;
     }
 
     QJsonObject jsonObject;
-    // Populate jsonObject with data from the database
+    // Populate jsonObject with data
+
     QJsonDocument doc(jsonObject);
     file.write(doc.toJson());
-    file.close();
+    return true;
 }
 
-/**
- * @brief Imports data from a JSON file.
- * @param filePath Path to the file from which data will be imported.
- */
-void importData(const QString &filePath) {
+bool ExportImport::importFromJson(const QString &filePath) {
+    // Implement import logic from JSON
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Failed to open file for reading:" << file.errorString();
-        return;
+        return false;
     }
 
-    QByteArray data = file.readAll();
-    QJsonDocument doc(QJsonDocument::fromJson(data));
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
     QJsonObject jsonObject = doc.object();
-    // Process jsonObject and save data to the database
+    // Read data from jsonObject
+
+    return true;
 }

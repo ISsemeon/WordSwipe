@@ -1,26 +1,32 @@
 #include "database.h"
-#include <QSqlQuery>
-#include <QSqlError>
-#include <QDebug>
 
-/**
- * @brief Constructs a Database object and sets up the database.
- */
-Database::Database() {
+Database::Database(const QString &path) {
     db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("wordswipe.db");
-    if (!db.open()) {
-        qDebug() << "Failed to open database:" << db.lastError().text();
-    }
-    setupTables();
+    db.setDatabaseName(path);
 }
 
-/**
- * @brief Sets up the necessary tables in the database.
- */
-void Database::setupTables() {
-    QSqlQuery query;
-    query.exec("CREATE TABLE IF NOT EXISTS Folders (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, color TEXT)");
-    query.exec("CREATE TABLE IF NOT EXISTS Modules (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, folder_id INTEGER, FOREIGN KEY(folder_id) REFERENCES Folders(id))");
-    query.exec("CREATE TABLE IF NOT EXISTS Cards (id INTEGER PRIMARY KEY AUTOINCREMENT, question TEXT, answer TEXT, image TEXT, module_id INTEGER, FOREIGN KEY(module_id) REFERENCES Modules(id))");
+Database::~Database() {
+    close();
+}
+
+bool Database::open() {
+    if (!db.open()) {
+        qWarning() << "Failed to open database:" << db.lastError().text();
+        return false;
+    }
+    return true;
+}
+
+void Database::close() {
+    if (db.isOpen()) {
+        db.close();
+    }
+}
+
+QSqlQuery Database::execQuery(const QString &queryStr) {
+    QSqlQuery query(db);
+    if (!query.exec(queryStr)) {
+        qWarning() << "Query failed:" << query.lastError().text();
+    }
+    return query;
 }
