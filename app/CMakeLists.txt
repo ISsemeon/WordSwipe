@@ -26,6 +26,8 @@ set(PROJECT_SOURCES
     qml.qrc
     models/folder.h
     models/folder.cpp
+    models/FolderModel.cpp
+    models/FolderModel.h
     models/module.h
     models/module.cpp
     models/card.h
