@@ -8,7 +8,8 @@ class ModuleModel : public QAbstractListModel {
 public:
     enum Role {
         NameRole = Qt::UserRole + 1,
-        ColorRole
+        ColorRole,
+        ModuleRole
     };
 
     explicit ModuleModel(QObject *parent = nullptr);

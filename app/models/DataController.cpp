@@ -1,7 +1,12 @@
 #include "DataController.h"
 #include <QDebug>
 
-DataController::DataController(QObject *parent) : QObject(parent), m_foldersModel(new FolderModel(this)) {
+DataController::DataController(QObject *parent) :
+    QObject(parent),
+    m_foldersModel(new FolderModel(this))
+    ,m_selectedFolder(),
+    m_selectedModule()
+{
     // Initialize with some data
     addFolder("Folder 1");
 }
@@ -37,6 +42,21 @@ void DataController::selectFolder(int index)
         qDebug() << "Index out of range:" << index;
     }
 }
+void DataController::selectModule(int index) {
+    if (m_selectedFolder && index >= 0 && index < m_selectedFolder->modulesModel()->rowCount()) {
+        QVariant variant = m_selectedFolder->modulesModel()->data(m_selectedFolder->modulesModel()->index(index), ModuleModel::ModuleRole);
+        auto module = variant.value<QSharedPointer<Module>>();
+        if (module) {
+            m_selectedModule = module;
+            emit selectedModuleChanged();
+            qDebug() << "Selected Module:" << module->name();
+        } else {
+            qDebug() << "Failed to get module at index:" << index;
+        }
+    } else {
+        qDebug() << "Index out of range or no folder selected.";
+    }
+}
 
 QString DataController::selectedFolderName() const
 {
@@ -67,4 +87,12 @@ void DataController::setNewFolderName(const QString &name) {
         m_newFolderName = name;
         emit newFolderNameChanged();
     }
+}
+
+Module* DataController::selectedModule()
+{
+    if (m_selectedModule) {
+        return m_selectedModule.data();
+    }
+    return nullptr;
 }

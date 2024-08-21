@@ -3,13 +3,7 @@
 
 ModuleModel::ModuleModel(QObject *parent)
     : QAbstractListModel(parent)
-    {
-    auto module = QSharedPointer<Module>::create(this);
-    module->setName("test");
-    module->setColor("test");
-    m_modules.append(module);
-
-    addModule(module);
+{
 }
 
 int ModuleModel::rowCount(const QModelIndex &parent) const {
@@ -27,9 +21,15 @@ QVariant ModuleModel::data(const QModelIndex &index, int role) const {
     const auto module = m_modules[index.row()];
     if (role == NameRole) {
         return module->name();
-    } else if (role == ColorRole) {
+    }
+    else if (role == ColorRole) {
         return module->color();
     }
+    else if (role == ModuleRole)
+    {
+        return QVariant::fromValue(module);
+    }
+
 
     return QVariant();
 }
@@ -38,6 +38,7 @@ QHash<int, QByteArray> ModuleModel::roleNames() const {
     QHash<int, QByteArray> roles;
     roles[NameRole] = "name";
     roles[ColorRole] = "color";
+    roles[ModuleRole] = "module";
     return roles;
 }
 

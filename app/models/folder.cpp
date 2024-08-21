@@ -7,6 +7,12 @@ Folder::Folder(QObject *parent)
     addModule("test", "white");
     addModule("test", "green");
     addModule("test", "blue");
+    addModule("test", "white");
+    addModule("test", "green");
+    addModule("test", "blue");
+    addModule("test", "white");
+    addModule("test", "green");
+    addModule("test", "blue");
 }
 
 QString Folder::name() const
