@@ -20,6 +20,7 @@ public:
 
     void addModule(const QSharedPointer<Module> &module);
 
+    void updateModule(int index);
 private:
     QList<QSharedPointer<Module>> m_modules;
 };

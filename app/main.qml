@@ -115,33 +115,68 @@ ApplicationWindow {
         }
     }
 
-    Component {
-        id: moduleDetailsPage
-        Item {
+   Component {
+    id: moduleDetailsPage
+    Item {
+        width: parent.width
+        height: parent.height
+
+       ListView {
+    id: cardListView
+    width: parent.width
+    height: parent.height - 50
+    model: dataController.selectedModule ? dataController.selectedModule.cardsModel : null
+    delegate: Item {
+        width: cardListView.width
+        height: 120
+
+        Rectangle {
             width: parent.width
-            height: parent.height
+            height: 120
+            color: "lightgray"
+            border.color: "black"
+            radius: 5
 
             ColumnLayout {
                 anchors.fill: parent
-                spacing: 20
-                anchors.margins: 20
+                anchors.margins: 10
 
-                Text {
-                    id: selectedModuleName
-                    text: dataController.selectedModule ? dataController.selectedModule.name : "No Module Selected"
-                    font.pixelSize: 24
-                    Layout.alignment: Qt.AlignHCenter
+                TextField {
+                    id: questionField
+                    text: model.question
+                    font.pixelSize: 18
+                    color: "black"
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    onTextChanged: model.question = questionField.text
                 }
 
-                // Добавьте другие элементы интерфейса для отображения информации о модуле.
-                Button {
-                    text: "Close"
-                    width: parent.width / 2
-                    onClicked: stackView.pop()
+                TextField {
+                    id: answerField
+                    text: model.answer
+                    font.pixelSize: 16
+                    color: "black"
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    onTextChanged: model.answer = answerField.text
                 }
             }
         }
     }
+}
+
+        Button {
+            text: "Add Card"
+            width: parent.width
+            height: 50
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            onClicked: {
+                dataController.selectedModule.addCard("New Question", "New Answer")
+            }
+        }
+    }
+}
 
     Component {
         id: folderDetailsPage

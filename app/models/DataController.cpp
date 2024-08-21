@@ -26,6 +26,13 @@ void DataController::addModuleToSelectedFolder(const QString &moduleName, const 
     }
 }
 
+void DataController::addCardToSelectedModule(const QString &word, const QString &translation) {
+    if (m_selectedModule) {
+        m_selectedModule->addCard(word, translation);
+        emit selectedModuleChanged(); // Обновляем UI
+    }
+}
+
 void DataController::selectFolder(int index)
 {
     if (index >= 0 && index < m_foldersModel->rowCount()) {

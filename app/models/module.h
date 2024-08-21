@@ -1,17 +1,15 @@
 #pragma once
 
 #include <QObject>
-#include <QString>
-#include <QList>
 #include <QSharedPointer>
-#include "card.h"
+#include "CardsModel.h"
 
 class Module : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString color READ color WRITE setColor NOTIFY colorChanged)
-    Q_PROPERTY(QList<QSharedPointer<Card>> cards READ cards NOTIFY cardsChanged)
+    Q_PROPERTY(CardsModel* cardsModel READ cardsModel NOTIFY cardsModelChanged)
 
 public:
     explicit Module(QObject *parent = nullptr);
@@ -22,16 +20,17 @@ public:
     QString color() const;
     void setColor(const QString &color);
 
-    QList<QSharedPointer<Card>> cards() const;
-    void addCard(const QString &question, const QString &answer, const QString &imagePath);
+    CardsModel* cardsModel() const;
+
+    Q_INVOKABLE void addCard(const QString &question, const QString &answer);
 
 signals:
     void nameChanged();
     void colorChanged();
-    void cardsChanged();
+    void cardsModelChanged();
 
 private:
     QString m_name;
     QString m_color;
-    QList<QSharedPointer<Card>> m_cards;
+    CardsModel* m_cardsModel;
 };

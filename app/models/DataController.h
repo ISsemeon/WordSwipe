@@ -20,6 +20,7 @@ public:
     Q_INVOKABLE void addModuleToSelectedFolder(const QString &moduleName, const QString &moduleColor);
     Q_INVOKABLE void selectFolder(int index);
     Q_INVOKABLE void selectModule(int index);
+    Q_INVOKABLE void addCardToSelectedModule(const QString &word, const QString &translation);
 
     QString selectedFolderName() const;
     Folder* selectedFolder();

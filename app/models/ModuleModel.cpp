@@ -34,6 +34,10 @@ QVariant ModuleModel::data(const QModelIndex &index, int role) const {
     return QVariant();
 }
 
+void ModuleModel::updateModule(int index) {
+    emit dataChanged(this->index(index), this->index(index));
+}
+
 QHash<int, QByteArray> ModuleModel::roleNames() const {
     QHash<int, QByteArray> roles;
     roles[NameRole] = "name";
