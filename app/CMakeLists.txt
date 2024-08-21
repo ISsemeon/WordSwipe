@@ -28,6 +28,8 @@ set(PROJECT_SOURCES
     models/folder.cpp
     models/FolderModel.cpp
     models/FolderModel.h
+    models/ModuleModel.cpp
+    models/ModuleModel.h
     models/module.h
     models/module.cpp
     models/card.h

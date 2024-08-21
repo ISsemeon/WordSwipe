@@ -19,6 +19,8 @@ QVariant FolderModel::data(const QModelIndex &index, int role) const {
     const auto folder = m_folders[index.row()];
     if (role == NameRole) {
         return folder->name();
+    } else if (role == FolderRole) {  // Добавьте эту роль для возвращения указателя на папку
+        return QVariant::fromValue(folder);
     }
 
     return QVariant();
@@ -27,6 +29,7 @@ QVariant FolderModel::data(const QModelIndex &index, int role) const {
 QHash<int, QByteArray> FolderModel::roleNames() const {
     QHash<int, QByteArray> roles;
     roles[NameRole] = "name";
+    roles[FolderRole] = "folder";
     return roles;
 }
 

@@ -1,4 +1,3 @@
-// module.cpp
 #include "module.h"
 
 Module::Module(QObject *parent)
@@ -32,14 +31,14 @@ void Module::setColor(const QString &color)
     }
 }
 
-QList<Card*> Module::cards() const
+QList<QSharedPointer<Card>> Module::cards() const
 {
     return m_cards;
 }
 
 void Module::addCard(const QString &question, const QString &answer, const QString &imagePath)
 {
-    Card *card = new Card(this);
+    auto card = QSharedPointer<Card>::create(this);
     card->setQuestion(question);
     card->setAnswer(answer);
     card->setImagePath(imagePath);

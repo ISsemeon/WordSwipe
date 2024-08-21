@@ -10,7 +10,8 @@ class FolderModel : public QAbstractListModel {
 
 public:
     enum Roles {
-        NameRole = Qt::UserRole + 1
+        NameRole = Qt::UserRole + 1,
+        FolderRole
     };
 
     explicit FolderModel(QObject *parent = nullptr);
