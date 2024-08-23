@@ -6,6 +6,23 @@ ModuleModel::ModuleModel(QObject *parent)
 {
 }
 
+void ModuleModel::removeModule(int index) {
+    if (index >= 0 && index < m_modules.size()) {
+        beginRemoveRows(QModelIndex(), index, index);
+        m_modules.removeAt(index);
+        endRemoveRows();
+    }
+}
+
+void ModuleModel::removeRow(int index) {
+    if (index >= 0 && index < rowCount()) {
+        beginRemoveRows(QModelIndex(), index, index);
+        // Удалите элемент из данных модели
+        m_modules.removeAt(index);
+        endRemoveRows();
+    }
+}
+
 int ModuleModel::rowCount(const QModelIndex &parent) const {
     if (parent.isValid()) {
         return 0;

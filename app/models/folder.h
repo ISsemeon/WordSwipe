@@ -19,6 +19,9 @@ public:
     ModuleModel* modulesModel() ;  // Метод для доступа к модели модулей
     void addModule(const QString &name, const QString &color);
 
+public slots:
+    void removeModule(int index);
+
 signals:
     void nameChanged();
     void modulesModelChanged();  // Сигнал для изменения модели

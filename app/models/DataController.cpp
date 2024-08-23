@@ -35,6 +35,37 @@ void DataController::addCardToSelectedModule(const QString &word, const QString 
     }
 }
 
+void DataController::deleteSelectedModule() {
+    if (m_selectedFolder && m_selectedModule) {
+        // Получите модель модулей выбранной папки
+        auto modulesModel = m_selectedFolder->modulesModel();
+
+        // Найдите индекс выбранного модуля
+        int index = -1;
+        for (int i = 0; i < modulesModel->rowCount(); ++i) {
+            QModelIndex modelIndex = modulesModel->index(i);
+            auto module = modulesModel->data(modelIndex, ModuleModel::ModuleRole).value<QSharedPointer<Module>>();
+            if (module == m_selectedModule) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index >= 0) {
+            // Удалите модуль из модели
+            m_selectedFolder->removeModule(index);
+            m_selectedModule.reset(); // Сбросить выбранный модуль
+            emit selectedModuleChanged(); // Обновите UI
+        } else {
+            qDebug() << "Module not found in the model.";
+        }
+    } else {
+        qDebug() << "No folder or module selected.";
+    }
+}
+
+
+
 void DataController::selectFolder(int index)
 {
     if (index >= 0 && index < m_foldersModel->rowCount()) {

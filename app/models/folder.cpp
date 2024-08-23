@@ -20,6 +20,13 @@ QString Folder::name() const
     return m_name;
 }
 
+void Folder::removeModule(int index) {
+    if (index >= 0 && index < m_modulesModel.rowCount()) {
+        m_modulesModel.removeRow(index); // Используйте метод удаления строки модели
+        emit modulesModelChanged(); // Обновите UI, если нужно
+    }
+}
+
 void Folder::setName(const QString &name)
 {
     if (m_name != name) {

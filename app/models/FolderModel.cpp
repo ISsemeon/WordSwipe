@@ -4,6 +4,16 @@ FolderModel::FolderModel(QObject *parent)
     : QAbstractListModel(parent) {
 }
 
+void FolderModel::removeFolder(int index) {
+    if (index < 0 || index >= m_folders.size()) {
+        return;
+    }
+
+    beginRemoveRows(QModelIndex(), index, index);
+    m_folders.removeAt(index);
+    endRemoveRows();
+}
+
 int FolderModel::rowCount(const QModelIndex &parent) const {
     if (parent.isValid()) {
         return 0;

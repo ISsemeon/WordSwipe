@@ -14,6 +14,11 @@ public:
 
     explicit ModuleModel(QObject *parent = nullptr);
 
+    void removeModule(int index);
+
+    public:
+    Q_INVOKABLE void removeRow(int index);
+
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;

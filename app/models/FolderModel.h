@@ -15,6 +15,8 @@ public:
     };
 
     explicit FolderModel(QObject *parent = nullptr);
+    void removeFolder(int index);
+
 
     // QAbstractListModel methods
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
