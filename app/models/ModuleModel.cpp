@@ -38,6 +38,11 @@ void ModuleModel::updateModule(int index) {
     emit dataChanged(this->index(index), this->index(index));
 }
 
+QList<QSharedPointer<Module> > ModuleModel::modules() const
+{
+    return m_modules;
+}
+
 QHash<int, QByteArray> ModuleModel::roleNames() const {
     QHash<int, QByteArray> roles;
     roles[NameRole] = "name";

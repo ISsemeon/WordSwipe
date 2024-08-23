@@ -16,6 +16,11 @@ ApplicationWindow {
         initialItem: mainPage
     }
 
+    QtObject
+    {
+        id: appStyle
+    }
+
     Component
     {
         id: mainPage
@@ -245,7 +250,9 @@ ApplicationWindow {
                                     color: "black"
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
-                                    onTextChanged: model.question = questionField.text
+                                    onTextChanged: {
+                                        model.question = questionField.text
+                                    }
                                 }
 
                                 TextField {
@@ -262,9 +269,6 @@ ApplicationWindow {
                         }
                     }
                 }
-
-
-
             }
         }
     }

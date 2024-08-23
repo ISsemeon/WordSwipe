@@ -1,5 +1,7 @@
 #include "DataController.h"
 #include <QDebug>
+#include "SessionManager.h"
+
 
 DataController::DataController(QObject *parent) :
     QObject(parent),
@@ -8,7 +10,7 @@ DataController::DataController(QObject *parent) :
     m_selectedModule()
 {
     // Initialize with some data
-    addFolder("Folder 1");
+//    addFolder("Folder 1");
 }
 
 void DataController::addFolder(const QString &name) {
@@ -79,6 +81,48 @@ Folder* DataController::selectedFolder()
     if(m_selectedFolder)
         return m_selectedFolder.data();
     return nullptr;
+}
+
+QList<QSharedPointer<Folder>> DataController::getFolders() const {
+    QList<QSharedPointer<Folder>> folders;
+    for (int i = 0; i < m_foldersModel->rowCount(); ++i) {
+        QModelIndex index = m_foldersModel->index(i);
+        QSharedPointer<Folder> folder = m_foldersModel->data(index, FolderModel::FolderRole).value<QSharedPointer<Folder>>();
+        folders.append(folder);
+    }
+    return folders;
+}
+
+void DataController::setFolders(const QList<QSharedPointer<Folder>> &folders) {
+    m_foldersModel->clear();
+    for (const auto &folder : folders) {
+        m_foldersModel->addFolder(folder);
+    }
+}
+
+
+void DataController::saveSession() {
+    // Extract the list of folders from the model
+    QList<QSharedPointer<Folder>> folders;
+    for (int i = 0; i < m_foldersModel->rowCount(); ++i) {
+        QModelIndex index = m_foldersModel->index(i);
+        QSharedPointer<Folder> folder = m_foldersModel->data(index, FolderModel::FolderRole).value<QSharedPointer<Folder>>();
+        folders.append(folder);
+    }
+
+    // Call the SessionManager to save the session
+    SessionManager::saveSession(sessionFilePath, folders);
+}
+
+void DataController::loadSession() {
+    QList<QSharedPointer<Folder>> folders;
+    if (SessionManager::loadSession(sessionFilePath, folders)) {
+        // Update the model with the loaded folders
+        m_foldersModel->clear();
+        for (const auto &folder : folders) {
+            m_foldersModel->addFolder(folder);
+        }
+    }
 }
 
 FolderModel* DataController::foldersModel() const {

@@ -25,10 +25,16 @@ public:
     QString selectedFolderName() const;
     Folder* selectedFolder();
 
+    QList<QSharedPointer<Folder>> getFolders() const;
+    void setFolders(const QList<QSharedPointer<Folder>> &folders);
+
     FolderModel* foldersModel() const;
     QString newFolderName() const;
     void setNewFolderName(const QString &name);
     Module* selectedModule();
+
+    Q_INVOKABLE void saveSession();
+    Q_INVOKABLE void loadSession();
 
 
 signals:
@@ -39,6 +45,9 @@ signals:
 
 
 private:
+
+    const QString sessionFilePath = "session.json";
+
     QSharedPointer<Module> m_selectedModule;
     FolderModel* m_foldersModel;
     QSharedPointer<Folder> m_selectedFolder;

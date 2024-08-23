@@ -21,6 +21,8 @@ public:
     void addModule(const QSharedPointer<Module> &module);
 
     void updateModule(int index);
+
+    QList<QSharedPointer<Module>> modules() const;
 private:
     QList<QSharedPointer<Module>> m_modules;
 };

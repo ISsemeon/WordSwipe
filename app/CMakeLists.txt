@@ -42,6 +42,8 @@ set(PROJECT_SOURCES
     utils/exportimport.h
     models/DataController.cpp
     models/DataController.h
+    models/SessionManager.cpp
+    models/SessionManager.h
 )
 
 # Define the executable

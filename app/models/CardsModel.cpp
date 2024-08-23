@@ -58,6 +58,11 @@ bool CardsModel::setData(const QModelIndex &index, const QVariant &value, int ro
     }
 }
 
+QList<QSharedPointer<Card> > CardsModel::cards() const
+{
+    return m_cards;
+}
+
 QHash<int, QByteArray> CardsModel::roleNames() const
 {
     QHash<int, QByteArray> roles;

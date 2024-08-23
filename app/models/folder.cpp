@@ -4,15 +4,15 @@ Folder::Folder(QObject *parent)
     : QObject(parent),
       m_modulesModel(new ModuleModel(this))
 {
-    addModule("test", "white");
-    addModule("test", "green");
-    addModule("test", "blue");
-    addModule("test", "white");
-    addModule("test", "green");
-    addModule("test", "blue");
-    addModule("test", "white");
-    addModule("test", "green");
-    addModule("test", "blue");
+//    addModule("test", "white");
+//    addModule("test", "green");
+//    addModule("test", "blue");
+//    addModule("test", "white");
+//    addModule("test", "green");
+//    addModule("test", "blue");
+//    addModule("test", "white");
+//    addModule("test", "green");
+//    addModule("test", "blue");
 }
 
 QString Folder::name() const
