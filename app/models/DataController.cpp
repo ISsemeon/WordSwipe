@@ -64,6 +64,39 @@ void DataController::deleteSelectedModule() {
     }
 }
 
+void DataController::deleteSelectedFolder()
+{
+    if (m_selectedFolder) {
+        // Получите индекс выбранной папки в модели
+        int index = -1;
+        for (int i = 0; i < m_foldersModel->rowCount(); ++i) {
+            QModelIndex modelIndex = m_foldersModel->index(i);
+            auto folder = m_foldersModel->data(modelIndex, FolderModel::FolderRole).value<QSharedPointer<Folder>>();
+            if (folder == m_selectedFolder) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index >= 0) {
+            // Удалите папку из модели
+            m_foldersModel->removeRow(index); // Обратите внимание, что этот метод должен быть реализован в FolderModel
+
+            // Сбросьте выбранную папку
+            m_selectedFolder.reset();
+            emit selectedFolderChanged(); // Обновите UI
+
+            // Если требуется, также сбросьте выбранный модуль
+            m_selectedModule.reset();
+            emit selectedModuleChanged(); // Обновите UI
+        } else {
+            qDebug() << "Folder not found in the model.";
+        }
+    } else {
+        qDebug() << "No folder selected.";
+    }
+}
+
 
 
 void DataController::selectFolder(int index)

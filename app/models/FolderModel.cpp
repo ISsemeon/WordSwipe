@@ -14,6 +14,14 @@ void FolderModel::removeFolder(int index) {
     endRemoveRows();
 }
 
+void FolderModel::removeRow(int index) {
+    if (index >= 0 && index < rowCount()) {
+        beginRemoveRows(QModelIndex(), index, index);
+        m_folders.removeAt(index);
+        endRemoveRows();
+    }
+}
+
 int FolderModel::rowCount(const QModelIndex &parent) const {
     if (parent.isValid()) {
         return 0;

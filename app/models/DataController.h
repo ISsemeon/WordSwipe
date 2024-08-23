@@ -24,6 +24,7 @@ public:
 
 public slots:
     void deleteSelectedModule();
+    void deleteSelectedFolder();
 
 public:
 
