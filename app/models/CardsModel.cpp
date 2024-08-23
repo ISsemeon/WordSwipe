@@ -7,8 +7,8 @@ CardsModel::CardsModel(QObject *parent)
 
 void CardsModel::addCard(const QSharedPointer<Card> &card)
 {
-    beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    m_cards.append(card);
+    beginInsertRows(QModelIndex(), 0, 0);  // Указываем, что новая строка будет вставлена в начало
+    m_cards.prepend(card);  // Добавляем карточку в начало списка
     endInsertRows();
 }
 

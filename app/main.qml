@@ -16,54 +16,94 @@ ApplicationWindow {
         initialItem: mainPage
     }
 
-    Component {
+    Component
+    {
         id: mainPage
-        Item {
+        Item
+        {
             width: parent.width
             height: parent.height
 
-            GridView {
-                id: gridView
-                width: parent.width
-                height: parent.height - 50
-                cellWidth: width / 2
-                cellHeight: height / 3
-                model: dataController.foldersModel
-                delegate: Item {
-                    width: gridView.cellWidth
-                    height: gridView.cellHeight
+            ColumnLayout
+            {
+                anchors.fill: parent
+                anchors.margins: 20
 
-                    Rectangle {
+                Button
+                {
+                    text: "New Folder"
+                    width: parent.width
+                    onClicked: stackView.push(addFolderPage)
+                    Layout.preferredHeight: 50
+                    Layout.fillWidth: true
+                }
+
+
+                GridView {
+                    id: gridView
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    cellWidth: (parent.width ) / 2
+                    cellHeight: (parent.height ) / 3
+
+                    model: dataController.foldersModel
+
+                    delegate: Item {
                         width: gridView.cellWidth
                         height: gridView.cellHeight
-                        color: "lightgray"
-                        border.color: "black"
-                        radius: 5
-                        Text {
-                            anchors.centerIn: parent
-                            text: model.name
-                            font.pixelSize: 16
-                            font.bold: true
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                dataController.selectFolder(index)
-                                stackView.push(folderDetailsPage)
+
+                        Rectangle {
+                            width: gridView.cellWidth
+                            height: gridView.cellHeight
+                            color: "lightgray"
+                            border.color: "black"
+                            border.width: 2
+                            radius: 5
+                            Text {
+                                id: moduleText2
+                                anchors.fill: parent
+                                anchors.margins: 10
+                                text: model.name
+                                font.pixelSize: 0
+                                font.bold: true
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                elide: Text.ElideRight
+                                wrapMode: Text.Wrap
+
+                                // Вычисление динамического размера шрифта
+                                onTextChanged: {
+                                    var maxFontSize = 24;
+                                    var minFontSize = 10;
+                                    var fontSizeStep = 2;
+
+                                    moduleText2.font.pixelSize = maxFontSize;
+                                    var lines = textMetrics2.lineCount;
+
+                                    while (lines > 3 && moduleText2.font.pixelSize > minFontSize) {
+                                        moduleText2.font.pixelSize -= fontSizeStep;
+                                        lines = textMetrics2.lineCount;
+                                    }
+                                }
+                            }
+                            TextMetrics {
+                                id: textMetrics2
+                                font: moduleText2.font
+                                text: moduleText2.text
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    dataController.selectFolder(index)
+                                    stackView.push(folderDetailsPage)
+                                }
                             }
                         }
                     }
                 }
+
             }
 
-            Button {
-                text: "Add New Folder"
-                width: parent.width
-                height: 50
-                anchors.bottom: parent.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
-                onClicked: stackView.push(addFolderPage)
-            }
         }
     }
 
@@ -74,30 +114,27 @@ ApplicationWindow {
             height: parent.height
 
             Rectangle {
-                width: parent.width
-                height: parent.height
+                anchors.fill: parent
                 color: "white"
                 border.color: "black"
                 radius: 10
+                anchors.margins: 10
 
                 ColumnLayout {
                     spacing: 20
-                    anchors.margins: 20
-
-                    TextField {
-                        id: folderNameInput
-                        Layout.fillWidth: true
-                        placeholderText: "Enter folder name"
-                        text: dataController.newFolderName
-                        onTextChanged: dataController.setNewFolderName(text)
-                    }
+                    anchors.fill: parent
+                    anchors.margins: 10
 
                     RowLayout {
                         spacing: 20
+                        Layout.fillWidth: true
+
 
                         Button {
-                            text: "Add"
-                            width: (parent.width - 40) / 2
+                            text: "Add New"
+
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 50
                             onClicked: {
                                 dataController.addFolder(folderNameInput.text)
                                 stackView.pop()
@@ -106,77 +143,131 @@ ApplicationWindow {
 
                         Button {
                             text: "Cancel"
-                            width: (parent.width - 40) / 2
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 50
                             onClicked: stackView.pop()
                         }
+                    }
+
+                    TextField {
+                        id: folderNameInput
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 90
+                        placeholderText: "Enter folder name"
+                        text: dataController.newFolderName
+                        onTextChanged: dataController.setNewFolderName(text)
                     }
                 }
             }
         }
     }
 
-   Component {
-    id: moduleDetailsPage
-    Item {
-        width: parent.width
-        height: parent.height
-
-       ListView {
-    id: cardListView
-    width: parent.width
-    height: parent.height - 50
-    model: dataController.selectedModule ? dataController.selectedModule.cardsModel : null
-    delegate: Item {
-        width: cardListView.width
-        height: 120
-
-        Rectangle {
+    Component {
+        id: moduleDetailsPage
+        Item {
             width: parent.width
-            height: 120
-            color: "lightgray"
-            border.color: "black"
-            radius: 5
+            height: parent.height
 
-            ColumnLayout {
+            ColumnLayout
+            {
                 anchors.fill: parent
                 anchors.margins: 10
-
-                TextField {
-                    id: questionField
-                    text: model.question
-                    font.pixelSize: 18
-                    color: "black"
+                RowLayout {
+                    spacing: 20
                     Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    onTextChanged: model.question = questionField.text
+
+                    Button {
+                        text: "Add"
+                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true
+                        onClicked: {
+                            dataController.selectedModule.addCard("", "")
+                        }
+                    }
+                    Button {
+                        text: "Study"
+                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true
+                        onClicked: {}
+                    }
+                    Button {
+                        text: "Back"
+                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true
+                        onClicked: stackView.pop()
+                    }
+                }
+                RowLayout {
+                    spacing: 20
+                    Layout.fillWidth: true
+                    Button {
+                        text: "Import"
+                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true
+                        onClicked: {}
+                    }
+                    Button {
+                        text: "Export"
+                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true
+                        onClicked: {}
+                    }
                 }
 
-                TextField {
-                    id: answerField
-                    text: model.answer
-                    font.pixelSize: 16
-                    color: "black"
-                    Layout.fillWidth: true
+                ListView {
+                    id: cardListView
                     Layout.fillHeight: true
-                    onTextChanged: model.answer = answerField.text
+                    Layout.fillWidth: true
+                    layoutDirection: Qt.TopToBottom
+                    spacing: 5
+                    clip:true
+                    model: dataController.selectedModule ? dataController.selectedModule.cardsModel : null
+                    delegate: Item {
+                        width: cardListView.width
+                        height: 120
+
+                        Rectangle {
+                            width: parent.width
+                            height: 120
+                            color: "lightgray"
+                            border.color: "black"
+                            radius: 5
+
+                            ColumnLayout {
+                                anchors.fill: parent
+                                anchors.margins: 10
+
+                                TextField {
+                                    id: questionField
+                                    placeholderText: qsTr("Word")
+                                    text: model.question
+                                    font.pixelSize: 18
+                                    color: "black"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    onTextChanged: model.question = questionField.text
+                                }
+
+                                TextField {
+                                    id: answerField
+                                    text: model.answer
+                                    placeholderText: qsTr("Translation")
+                                    font.pixelSize: 16
+                                    color: "black"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    onTextChanged: model.answer = answerField.text
+                                }
+                            }
+                        }
+                    }
                 }
+
+
+
             }
         }
     }
-}
-
-        Button {
-            text: "Add Card"
-            width: parent.width
-            height: 50
-            anchors.bottom: parent.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: {
-                dataController.selectedModule.addCard("New Question", "New Answer")
-            }
-        }
-    }
-}
 
     Component {
         id: folderDetailsPage
@@ -190,18 +281,58 @@ ApplicationWindow {
                 anchors.margins: 20
 
                 Text {
-                    id: selectedFolderName
+                    id: folderNameText
                     text: dataController.selectedFolder ? dataController.selectedFolder.name : "No Folder Selected"
-                    font.pixelSize: 24
+                    font.pixelSize: 26
+                    font.bold: true
                     Layout.alignment: Qt.AlignHCenter
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+
+                    Button {
+                        text: "Add"
+                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true
+                        onClicked: stackView.push(addModulePage)
+                    }
+                    Button {
+                        text: "Study"
+                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true
+                        onClicked:
+                        {}
+                    }
+                    Button {
+                        text: "Export"
+                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true
+                        onClicked:
+                        {}
+                    }
+                    Button {
+                        text: "Import"
+                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true
+                        onClicked:
+                        {}
+                    }
+
+                    Button {
+                        text: "Back"
+
+                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true
+                        onClicked: stackView.pop()
+                    }
                 }
 
                 GridView {
                     id: modulesGridView
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    cellWidth: (parent.width - 20) / 2
-                    cellHeight: (parent.height - 80) / 3
+                    cellWidth: (parent.width ) / 2
+                    cellHeight: (parent.height ) / 3
                     model: dataController.selectedFolder ? dataController.selectedFolder.modulesModel : null
                     clip: true
 
@@ -232,18 +363,17 @@ ApplicationWindow {
 
                             // Эффект матового стекла
                             Rectangle {
-                                anchors.fill: moduleDel
+                                anchors.fill: parent
                                 anchors.margins: 5
-                                color: "black"  // Белый фон для имитации стеклянного эффекта
+                                color: "white"
                                 radius: 5
                                 border.color: "black"
-                                opacity: 0.1  // Настройка степени матовости
-                                z:1
+                                opacity: 0.1
                             }
 
                             // Основной контент
                             Rectangle {
-                                id: moduleDel
+                                id: moduleContent
                                 width: parent.width
                                 height: parent.height
                                 color: model.color
@@ -251,9 +381,8 @@ ApplicationWindow {
                                 border.width: 2
                                 radius: 5
 
-                                // Текст
                                 Text {
-                                    id: textItem
+                                    id: moduleText
                                     anchors.fill: parent
                                     anchors.margins: 10
                                     text: model.name
@@ -263,17 +392,17 @@ ApplicationWindow {
                                     verticalAlignment: Text.AlignVCenter
                                     elide: Text.ElideRight
                                     wrapMode: Text.Wrap
-                                    // Вычисление динамического размера шрифта
+
                                     onTextChanged: {
                                         var maxFontSize = 24;
                                         var minFontSize = 10;
                                         var fontSizeStep = 2;
 
-                                        textItem.font.pixelSize = maxFontSize;
+                                        moduleText.font.pixelSize = maxFontSize;
                                         var lines = textMetrics.lineCount;
 
-                                        while (lines > 3 && textItem.font.pixelSize > minFontSize) {
-                                            textItem.font.pixelSize -= fontSizeStep;
+                                        while (lines > 3 && moduleText.font.pixelSize > minFontSize) {
+                                            moduleText.font.pixelSize -= fontSizeStep;
                                             lines = textMetrics.lineCount;
                                         }
                                     }
@@ -281,17 +410,15 @@ ApplicationWindow {
 
                                 TextMetrics {
                                     id: textMetrics
-                                    font: textItem.font
-                                    text: textItem.text
+                                    font: moduleText.font
+                                    text: moduleText.text
                                 }
 
                                 MouseArea {
                                     anchors.fill: parent
                                     onClicked: {
-                                        onClicked: {
-                                            dataController.selectModule(index);
-                                            stackView.push(moduleDetailsPage);
-                                        }
+                                        dataController.selectModule(index);
+                                        stackView.push(moduleDetailsPage);
                                     }
                                 }
                             }
@@ -299,23 +426,6 @@ ApplicationWindow {
                     }
                 }
 
-                RowLayout {
-                    spacing: 20
-                    Layout.alignment: Qt.AlignBottom
-                    Layout.fillWidth: true
-
-                    Button {
-                        text: "Add New Module"
-                        width: (parent.width - 40) / 2
-                        onClicked: stackView.push(addModulePage)
-                    }
-
-                    Button {
-                        text: "Close"
-                        width: (parent.width - 40) / 2
-                        onClicked: stackView.pop()
-                    }
-                }
             }
         }
     }
@@ -340,26 +450,26 @@ ApplicationWindow {
                     TextField {
                         id: moduleNameInput
                         Layout.fillWidth: true
+                        Layout.preferredHeight: 50
                         placeholderText: "Enter module name"
                     }
 
-                    ColumnLayout {
-                        spacing: 10
 
-                        Rectangle {
-                            id: colorPreview
-                            width: 50
-                            height: 50
-                            color: moduleColorInput.text !== "" ? moduleColorInput.text : "lightgray"
-                            border.color: "black"
-                            radius: 5
 
-                            MouseArea {
-                                anchors.fill: parent
-                                onClicked: colorDialog.open()
-                            }
+                    Rectangle {
+                        id: colorPreview
+                        width: 50
+                        height: 50
+                        color: moduleColorInput.text !== "" ? moduleColorInput.text : "lightgray"
+                        border.color: "black"
+                        radius: 5
+
+                        MouseArea {
+                            anchors.fill: colorPreview
+                            onClicked: colorDialog.open()
                         }
                     }
+
 
                     RowLayout {
                         spacing: 20
@@ -368,7 +478,7 @@ ApplicationWindow {
                             text: "Add"
                             width: (parent.width - 40) / 2
                             onClicked: {
-                                dataController.addModuleToSelectedFolder(moduleNameInput.text, moduleColorInput.text)
+                                dataController.addModuleToSelectedFolder(moduleNameInput.text, colorPreview.color)
                                 stackView.pop()
                             }
                         }
@@ -384,15 +494,14 @@ ApplicationWindow {
 
             ColorDialog {
                 id: colorDialog
-                onAccepted: {
-                    moduleColorInput.text = colorDialog.color.toString();
-                    colorPreview.color = colorDialog.color;
-                }
+                onAccepted: colorPreview.color = colorDialog.selectedColor
             }
 
             TextField {
                 id: moduleColorInput
                 visible: false
+                text: colorPreview.color
+                onTextChanged: colorPreview.color = moduleColorInput.text
             }
         }
     }
