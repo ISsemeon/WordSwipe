@@ -16,40 +16,47 @@ ApplicationWindow {
         initialItem: mainPage
     }
 
-    QtObject
-    {
+    ListModel {
+    id: colorPresets
+    ListElement { color: "lightblue" }
+    ListElement { color: "lightgreen" }
+    ListElement { color: "lightcoral" }
+    ListElement { color: "lightgoldenrodyellow" }
+    ListElement { color: "lightpink" }
+    ListElement { color: "lightsalmon" }
+    ListElement { color: "lightseagreen" }
+    ListElement { color: "lightsteelblue" }
+    ListElement { color: "lightyellow" }
+    ListElement { color: "lavender" }
+}
+
+    QtObject {
         id: appStyle
     }
 
-    Component
-    {
+    Component {
         id: mainPage
-        Item
-        {
+        Item {
             width: parent.width
             height: parent.height
 
-            ColumnLayout
-            {
+            ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 20
 
-                Button
-                {
+                Button {
                     text: "New Folder"
-                    width: parent.width
                     onClicked: stackView.push(addFolderPage)
                     Layout.preferredHeight: 50
                     Layout.fillWidth: true
                 }
 
-
                 GridView {
                     id: gridView
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    cellWidth: (parent.width ) / 2
-                    cellHeight: (parent.height ) / 3
+                    cellWidth: (parent.width) / 2
+                    cellHeight: (parent.height) / 3
 
                     model: dataController.foldersModel
 
@@ -64,6 +71,7 @@ ApplicationWindow {
                             border.color: "black"
                             border.width: 2
                             radius: 5
+
                             Text {
                                 id: moduleText2
                                 anchors.fill: parent
@@ -76,7 +84,6 @@ ApplicationWindow {
                                 elide: Text.ElideRight
                                 wrapMode: Text.Wrap
 
-                                // Вычисление динамического размера шрифта
                                 onTextChanged: {
                                     var maxFontSize = 24;
                                     var minFontSize = 10;
@@ -91,11 +98,13 @@ ApplicationWindow {
                                     }
                                 }
                             }
+
                             TextMetrics {
                                 id: textMetrics2
                                 font: moduleText2.font
                                 text: moduleText2.text
                             }
+
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
@@ -106,9 +115,7 @@ ApplicationWindow {
                         }
                     }
                 }
-
             }
-
         }
     }
 
@@ -119,40 +126,17 @@ ApplicationWindow {
             height: parent.height
 
             Rectangle {
-                anchors.fill: parent
+                width: parent.width
+                height: parent.height
                 color: "white"
                 border.color: "black"
+                border.width: 1
                 radius: 10
                 anchors.margins: 10
 
                 ColumnLayout {
                     spacing: 20
                     anchors.fill: parent
-                    anchors.margins: 10
-
-                    RowLayout {
-                        spacing: 20
-                        Layout.fillWidth: true
-
-
-                        Button {
-                            text: "Add New"
-
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 50
-                            onClicked: {
-                                dataController.addFolder(folderNameInput.text)
-                                stackView.pop()
-                            }
-                        }
-
-                        Button {
-                            text: "Cancel"
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 50
-                            onClicked: stackView.pop()
-                        }
-                    }
 
                     TextField {
                         id: folderNameInput
@@ -161,6 +145,28 @@ ApplicationWindow {
                         placeholderText: "Enter folder name"
                         text: dataController.newFolderName
                         onTextChanged: dataController.setNewFolderName(text)
+                    }
+
+                    RowLayout {
+                        spacing: 20
+                        Layout.fillWidth: true
+
+                        Button {
+                            text: "Add New"
+                            Layout.preferredHeight: 50
+                            Layout.fillWidth: true
+                            onClicked: {
+                                dataController.addFolder(folderNameInput.text)
+                                stackView.pop()
+                            }
+                        }
+
+                        Button {
+                            text: "Cancel"
+                            Layout.preferredHeight: 50
+                            Layout.fillWidth: true
+                            onClicked: stackView.pop()
+                        }
                     }
                 }
             }
@@ -173,10 +179,11 @@ ApplicationWindow {
             width: parent.width
             height: parent.height
 
-            ColumnLayout
-            {
+            ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 10
+                spacing: 20
+                anchors.margins: 20
+
                 RowLayout {
                     spacing: 20
                     Layout.fillWidth: true
@@ -189,12 +196,14 @@ ApplicationWindow {
                             dataController.selectedModule.addCard("", "")
                         }
                     }
+
                     Button {
                         text: "Study"
                         Layout.preferredHeight: 50
                         Layout.fillWidth: true
                         onClicked: {}
                     }
+
                     Button {
                         text: "Back"
                         Layout.preferredHeight: 50
@@ -202,15 +211,18 @@ ApplicationWindow {
                         onClicked: stackView.pop()
                     }
                 }
+
                 RowLayout {
                     spacing: 20
                     Layout.fillWidth: true
+
                     Button {
                         text: "Import"
                         Layout.preferredHeight: 50
                         Layout.fillWidth: true
                         onClicked: {}
                     }
+
                     Button {
                         text: "Export"
                         Layout.preferredHeight: 50
@@ -225,8 +237,9 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     layoutDirection: Qt.TopToBottom
                     spacing: 5
-                    clip:true
+                    clip: true
                     model: dataController.selectedModule ? dataController.selectedModule.cardsModel : null
+
                     delegate: Item {
                         width: cardListView.width
                         height: 120
@@ -236,6 +249,7 @@ ApplicationWindow {
                             height: 120
                             color: "lightgray"
                             border.color: "black"
+                            border.width: 2
                             radius: 5
 
                             ColumnLayout {
@@ -291,7 +305,9 @@ ApplicationWindow {
                     font.bold: true
                     Layout.alignment: Qt.AlignHCenter
                 }
+
                 RowLayout {
+                    spacing: 20
                     Layout.fillWidth: true
 
                     Button {
@@ -300,31 +316,30 @@ ApplicationWindow {
                         Layout.fillWidth: true
                         onClicked: stackView.push(addModulePage)
                     }
+
                     Button {
                         text: "Study"
                         Layout.preferredHeight: 50
                         Layout.fillWidth: true
-                        onClicked:
-                        {}
+                        onClicked: {}
                     }
+
                     Button {
                         text: "Export"
                         Layout.preferredHeight: 50
                         Layout.fillWidth: true
-                        onClicked:
-                        {}
+                        onClicked: {}
                     }
+
                     Button {
                         text: "Import"
                         Layout.preferredHeight: 50
                         Layout.fillWidth: true
-                        onClicked:
-                        {}
+                        onClicked: {}
                     }
 
                     Button {
                         text: "Back"
-
                         Layout.preferredHeight: 50
                         Layout.fillWidth: true
                         onClicked: stackView.pop()
@@ -335,8 +350,8 @@ ApplicationWindow {
                     id: modulesGridView
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    cellWidth: (parent.width ) / 2
-                    cellHeight: (parent.height ) / 3
+                    cellWidth: (parent.width) / 2
+                    cellHeight: (parent.height) / 3
                     model: dataController.selectedFolder ? dataController.selectedFolder.modulesModel : null
                     clip: true
 
@@ -345,13 +360,12 @@ ApplicationWindow {
                         height: modulesGridView.cellHeight
 
                         Rectangle {
-                            width: parent.width - 5
-                            height: parent.height - 5
+                            width: modulesGridView.cellWidth - 5
+                            height: modulesGridView.cellHeight - 5
                             radius: 5
                             border.color: "black"
                             border.width: 2
 
-                            // Эффект тени
                             Rectangle {
                                 width: parent.width
                                 height: parent.height
@@ -365,7 +379,6 @@ ApplicationWindow {
                                 z: -1
                             }
 
-                            // Эффект матового стекла
                             Rectangle {
                                 anchors.fill: parent
                                 anchors.margins: 5
@@ -375,11 +388,9 @@ ApplicationWindow {
                                 opacity: 0.1
                             }
 
-                            // Основной контент
                             Rectangle {
                                 id: moduleContent
-                                width: parent.width
-                                height: parent.height
+                                anchors.fill: parent
                                 color: model.color
                                 border.color: "black"
                                 border.width: 2
@@ -429,84 +440,90 @@ ApplicationWindow {
                         }
                     }
                 }
-
             }
         }
     }
 
     Component {
-        id: addModulePage
-        Item {
-            width: parent.width
-            height: parent.height
+    id: addModulePage
+    Item {
+        anchors.fill: parent
 
-            Rectangle {
-                width: parent.width
-                height: parent.height
-                color: "white"
-                border.color: "black"
-                radius: 10
+        Rectangle {
+            id: modBG
+            anchors.fill: parent
+            color: "white"
+            border.color: "black"
+            border.width: 1
+            radius: 10
+            anchors.margins: 10
 
-                ColumnLayout {
-                    spacing: 20
-                    anchors.margins: 20
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 10
 
-                    TextField {
-                        id: moduleNameInput
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 50
-                        placeholderText: "Enter module name"
-                    }
+                TextField {
+                    id: moduleNameInput
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 50
+                    placeholderText: "Enter module name"
+                }
+
+                GridView {
+                    id: colorGridView
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    model: colorPresets
+                    cellWidth: 100
+                    cellHeight: 100
 
 
-
-                    Rectangle {
-                        id: colorPreview
-                        width: 50
-                        height: 50
-                        color: moduleColorInput.text !== "" ? moduleColorInput.text : "lightgray"
+                    delegate: Rectangle {
+                        width: colorGridView.cellWidth - 5
+                        height: colorGridView.cellHeight - 5
+                        color: model.color
                         border.color: "black"
-                        radius: 5
+                        border.width: 2
+                        radius: width / 2
 
                         MouseArea {
-                            anchors.fill: colorPreview
-                            onClicked: colorDialog.open()
-                        }
-                    }
-
-
-                    RowLayout {
-                        spacing: 20
-
-                        Button {
-                            text: "Add"
-                            width: (parent.width - 40) / 2
+                            anchors.fill: parent
                             onClicked: {
-                                dataController.addModuleToSelectedFolder(moduleNameInput.text, colorPreview.color)
-                                stackView.pop()
+                                modBG.color = model.color
                             }
-                        }
-
-                        Button {
-                            text: "Cancel"
-                            width: (parent.width - 40) / 2
-                            onClicked: stackView.pop()
                         }
                     }
                 }
-            }
 
-            ColorDialog {
-                id: colorDialog
-                onAccepted: colorPreview.color = colorDialog.selectedColor
-            }
+                RowLayout {
+                    spacing: 20
+                    Layout.fillWidth: true
 
-            TextField {
-                id: moduleColorInput
-                visible: false
-                text: colorPreview.color
-                onTextChanged: colorPreview.color = moduleColorInput.text
+                    Button {
+                        text: "Add"
+                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true
+                        onClicked: {
+                            dataController.addModuleToSelectedFolder(moduleNameInput.text, colorPreview.color)
+                            stackView.pop()
+                        }
+                    }
+
+                    Button {
+                        text: "Cancel"
+                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true
+                        onClicked: stackView.pop()
+                    }
+                }
+
+                Item {
+                    Layout.fillHeight: true
+                }
             }
         }
+
     }
+}
+
 }
