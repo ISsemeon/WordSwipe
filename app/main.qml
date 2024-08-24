@@ -218,9 +218,14 @@ ApplicationWindow {
                         Layout.preferredHeight: 50
                         Layout.fillWidth: true
                         onClicked: {
-                            dataController.selectedModule.addCard("", "")
+                            if (!dataController.hasUnfilledCards()) {
+                                dataController.selectedModule.addCard("", "");
+                            } else {
+                                console.log("You must fill in existing cards before adding a new one.")
+                            }
                         }
                     }
+
                     Button {
                         text: "Delete"
                         Layout.preferredHeight: 50
@@ -246,50 +251,11 @@ ApplicationWindow {
                     }
                 }
 
-                RowLayout {
-                    spacing: 20
-                    Layout.fillWidth: true
-
-
-
-                    Button {
-                        text: "Export"
-                        Layout.preferredHeight: 50
-                        Layout.fillWidth: true
-                        onClicked: {exportModuleDialog.open()}
-                    }
-
-
-                    FolderDialog {
-                        id: exportModuleDialog
-                        title: "Select Folder"
-                        onAccepted: {
-                            var folderPath = folder.toString().replace("file:///", ""); // Удаление префикса
-
-                            if (dataController.selectedFolder) {
-                                var folderName = dataController.selectedFolder.name;
-                                var currentDate = Qt.formatDateTime(new Date(), "yyyy-MM-dd_HH-mm-ss");
-                                var fullPath =  "/" + folderPath + "/" + "Module_" +folderName + "_" + currentDate + ".json";
-
-                                console.log(fullPath)
-
-                                dataController.exportSelectedModule(fullPath);
-                            } else {
-                                console.log("No folder selected for export.");
-                            }
-                        }
-
-                        onRejected: {
-                            console.log("Select folder dialog was cancelled");
-                        }
-                    }
-                }
-
                 ListView {
                     id: cardListView
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    //layoutDirection: Qt.TopToBottom
+                    layoutDirection: Qt.TopToBottom
                     spacing: 5
                     clip: true
                     model: dataController.selectedModule ? dataController.selectedModule.cardsModel : null
@@ -392,32 +358,12 @@ ApplicationWindow {
                     Layout.fillWidth: true
 
                     Button {
-                        text: "Export Folder"
+                        text: "Export"
                         Layout.preferredHeight: 50
                         Layout.fillWidth: true
                         onClicked:
                         {
                             exportFolderDialog.open();
-                        }
-                    }
-                    Button {
-                        text: "Import Module"
-                        Layout.preferredHeight: 50
-                        Layout.fillWidth: true
-                        onClicked: {importModuleDialog.open()}
-                    }
-
-                    FileDialog {
-                        id: importModuleDialog
-                        title: "Import File"
-                        nameFilters: ["JSON Files (*.json)"]
-                        onAccepted: {
-                            var filePath = importModuleDialog.file.toString(); // Преобразуйте в строку
-                            // Удалите префикс "file://" из пути
-                            if (filePath.startsWith("file://")) {
-                                filePath = filePath.substring(7);
-                            }
-                            dataController.importModule(filePath);
                         }
                     }
 
@@ -636,7 +582,6 @@ ApplicationWindow {
     QtObject
     {
         id: guiController
-
-    }
+       }
 
 }

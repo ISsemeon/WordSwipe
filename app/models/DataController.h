@@ -29,6 +29,8 @@ public:
     Q_INVOKABLE bool exportSelectedModule(const QString &filePath);
     Q_INVOKABLE bool importModule(const QString &filePath);
 
+    Q_INVOKABLE bool hasUnfilledCards() const;
+
 
 
 public slots:
@@ -68,4 +70,8 @@ private:
     FolderModel* m_foldersModel;
     QSharedPointer<Folder> m_selectedFolder;
     QString m_newFolderName;
+
+
+private:
+    bool checkIfModuleHasUnfilledCards(const Module* module) const;
 };

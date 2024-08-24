@@ -10,7 +10,7 @@ DataController::DataController(QObject *parent) :
     m_selectedModule()
 {
     // Initialize with some data
-//    addFolder("Folder 1");
+    //    addFolder("Folder 1");
 }
 
 void DataController::addFolder(const QString &name) {
@@ -74,7 +74,7 @@ bool DataController::exportSelectedModule(const QString &filePath) {
 }
 
 bool DataController::importModule(const QString &filePath) {
-  if (!m_selectedFolder) {
+    if (!m_selectedFolder) {
         qDebug() << "No folder selected to import module into.";
         return false;
     }
@@ -96,6 +96,26 @@ bool DataController::importModule(const QString &filePath) {
     }
 
     return success;
+}
+
+bool DataController::hasUnfilledCards() const {
+    if (!m_selectedModule) return false;
+
+    return checkIfModuleHasUnfilledCards(m_selectedModule.data());
+}
+
+bool DataController::checkIfModuleHasUnfilledCards(const Module* module) const {
+    if (!module) return false;
+
+    const CardsModel* cardsModel = module->cardsModel();
+    if (!cardsModel) return false;
+
+    for (const auto &card : cardsModel->cards()) {
+        if (card->question().isEmpty() || card->answer().isEmpty()) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool DataController::importFolder(const QString &filePath) {
