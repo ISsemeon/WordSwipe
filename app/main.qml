@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 import QtQuick.Dialogs
 import Qt.labs.platform
 
+
 ApplicationWindow {
     visible: true
     width: 450
@@ -65,8 +66,8 @@ ApplicationWindow {
                         height: gridView.cellHeight
 
                         Rectangle {
-                            width: gridView.cellWidth
-                            height: gridView.cellHeight
+                            width: gridView.cellWidth - 5
+                            height: gridView.cellHeight -5
                             color: "lightgray"
                             border.color: "black"
                             border.width: 2
@@ -160,12 +161,36 @@ ApplicationWindow {
                                 stackView.pop()
                             }
                         }
+                        Button {
+                            text: "Import "
+                            Layout.preferredHeight: 50
+                            Layout.fillWidth: true
+                            onClicked:
+                            {
+                                importFolderDialog.open();
+                            }
+                        }
 
                         Button {
                             text: "Cancel"
                             Layout.preferredHeight: 50
                             Layout.fillWidth: true
                             onClicked: stackView.pop()
+                        }
+
+                        FileDialog {
+                            id: importFolderDialog
+                            title: "Import File"
+                            nameFilters: ["JSON Files (*.json)"]
+                            onAccepted: {
+                                var filePath = importFolderDialog.file.toString(); // Преобразуйте в строку
+                                // Удалите префикс "file://" из пути
+                                if (filePath.startsWith("file://")) {
+                                    filePath = filePath.substring(7);
+                                }
+                                dataController.importFolder(filePath);
+                                stackView.pop();
+                            }
                         }
                     }
                 }
@@ -225,18 +250,38 @@ ApplicationWindow {
                     spacing: 20
                     Layout.fillWidth: true
 
-                    Button {
-                        text: "Import"
-                        Layout.preferredHeight: 50
-                        Layout.fillWidth: true
-                        onClicked: {}
-                    }
+
 
                     Button {
                         text: "Export"
                         Layout.preferredHeight: 50
                         Layout.fillWidth: true
-                        onClicked: {}
+                        onClicked: {exportModuleDialog.open()}
+                    }
+
+
+                    FolderDialog {
+                        id: exportModuleDialog
+                        title: "Select Folder"
+                        onAccepted: {
+                            var folderPath = folder.toString().replace("file:///", ""); // Удаление префикса
+
+                            if (dataController.selectedFolder) {
+                                var folderName = dataController.selectedFolder.name;
+                                var currentDate = Qt.formatDateTime(new Date(), "yyyy-MM-dd_HH-mm-ss");
+                                var fullPath =  "/" + folderPath + "/" + "Module_" +folderName + "_" + currentDate + ".json";
+
+                                console.log(fullPath)
+
+                                dataController.exportSelectedModule(fullPath);
+                            } else {
+                                console.log("No folder selected for export.");
+                            }
+                        }
+
+                        onRejected: {
+                            console.log("Select folder dialog was cancelled");
+                        }
                     }
                 }
 
@@ -347,17 +392,33 @@ ApplicationWindow {
                     Layout.fillWidth: true
 
                     Button {
-                        text: "Export"
+                        text: "Export Folder"
                         Layout.preferredHeight: 50
                         Layout.fillWidth: true
-                        onClicked: {}
+                        onClicked:
+                        {
+                            exportFolderDialog.open();
+                        }
+                    }
+                    Button {
+                        text: "Import Module"
+                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true
+                        onClicked: {importModuleDialog.open()}
                     }
 
-                    Button {
-                        text: "Import"
-                        Layout.preferredHeight: 50
-                        Layout.fillWidth: true
-                        onClicked: {}
+                    FileDialog {
+                        id: importModuleDialog
+                        title: "Import File"
+                        nameFilters: ["JSON Files (*.json)"]
+                        onAccepted: {
+                            var filePath = importModuleDialog.file.toString(); // Преобразуйте в строку
+                            // Удалите префикс "file://" из пути
+                            if (filePath.startsWith("file://")) {
+                                filePath = filePath.substring(7);
+                            }
+                            dataController.importModule(filePath);
+                        }
                     }
 
                     Button {
@@ -370,6 +431,26 @@ ApplicationWindow {
                         }
                     }
 
+                    FolderDialog {
+                        id: exportFolderDialog
+                        title: "Select Folder"
+                        onAccepted: {
+                            var folderPath = folder.toString().replace("file:///", ""); // Удаление префикса
+
+                            if (dataController.selectedFolder) {
+                                var folderName = dataController.selectedFolder.name;
+                                var currentDate = Qt.formatDateTime(new Date(), "yyyy-MM-dd_HH-mm-ss");
+                                var fullPath =   "/" + folderPath + "/" + "Folder_" +folderName + "_" + currentDate + ".json";
+                                dataController.exportSelectedFolder(fullPath);
+                            } else {
+                                console.log("No folder selected for export.");
+                            }
+                        }
+
+                        onRejected: {
+                            console.log("Select folder dialog was cancelled");
+                        }
+                    }
                 }
 
                 GridView {
@@ -551,6 +632,11 @@ ApplicationWindow {
             }
 
         }
+    }
+    QtObject
+    {
+        id: guiController
+
     }
 
 }

@@ -22,6 +22,15 @@ public:
     Q_INVOKABLE void selectModule(int index);
     Q_INVOKABLE void addCardToSelectedModule(const QString &word, const QString &translation);
 
+    //ei
+    Q_INVOKABLE bool exportSelectedFolder(const QString &filePath);
+
+    Q_INVOKABLE bool importFolder(const QString &filePath);
+    Q_INVOKABLE bool exportSelectedModule(const QString &filePath);
+    Q_INVOKABLE bool importModule(const QString &filePath);
+
+
+
 public slots:
     void deleteSelectedModule();
     void deleteSelectedFolder();

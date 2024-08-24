@@ -17,8 +17,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_PREFIX_PATH "/Users/semyon/Qt/6.4.0/macos")
 
 # Find Qt libraries
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Sql)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Sql)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick )
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick )
 
 # Define source files
 set(PROJECT_SOURCES
@@ -36,10 +36,6 @@ set(PROJECT_SOURCES
     models/module.cpp
     models/card.h
     models/card.cpp
-    utils/database.cpp
-    utils/database.h
-    utils/exportimport.cpp
-    utils/exportimport.h
     models/DataController.cpp
     models/DataController.h
     models/SessionManager.cpp
@@ -68,7 +64,7 @@ endif()
 
 # Link Qt libraries
 target_link_libraries(WordSwipe
-    PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Sql
+    PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick
 )
 
 # Set properties for macOS and Windows

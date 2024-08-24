@@ -72,6 +72,8 @@ bool SessionManager::exportFolder(const QString &filePath, const QSharedPointer<
 
 bool SessionManager::importFolder(const QString &filePath, QSharedPointer<Folder> &folder) {
     QFile file(filePath);
+
+    qWarning() << "filename: " << filePath;
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "Failed to open file for reading:" << file.errorString();
         return false;

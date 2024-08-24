@@ -64,6 +64,61 @@ void DataController::deleteSelectedModule() {
     }
 }
 
+bool DataController::exportSelectedFolder(const QString &filePath) {
+    return SessionManager::exportFolder(filePath, m_selectedFolder);
+}
+
+
+bool DataController::exportSelectedModule(const QString &filePath) {
+    return SessionManager::exportModule(filePath, m_selectedModule);
+}
+
+bool DataController::importModule(const QString &filePath) {
+  if (!m_selectedFolder) {
+        qDebug() << "No folder selected to import module into.";
+        return false;
+    }
+
+    QSharedPointer<Module> importedModule(new Module);
+
+    bool success = SessionManager::importModule(filePath, importedModule);
+
+    if (success) {
+        // Добавьте модуль в выбранную папку
+        m_selectedFolder->addModule(importedModule->name(), importedModule->color());
+        emit selectedFolderChanged(); // Обновите UI
+
+        // Установите новый модуль как выбранный
+        m_selectedModule = importedModule;
+        emit selectedModuleChanged(); // Обновите UI
+    } else {
+        qDebug() << "Failed to import module from" << filePath;
+    }
+
+    return success;
+}
+
+bool DataController::importFolder(const QString &filePath) {
+    // Используйте SessionManager для импорта папки
+    QSharedPointer<Folder> importedFolder(new Folder);
+
+    bool success = SessionManager::importFolder(filePath, importedFolder);
+
+    if (success) {
+        // Добавьте новую папку в модель
+        m_foldersModel->addFolder(importedFolder);
+        emit foldersModelChanged(); // Обновите UI
+
+        // Установите новую папку как выбранную
+        m_selectedFolder = importedFolder;
+        emit selectedFolderChanged(); // Обновите UI
+    } else {
+        qDebug() << "Failed to import folder from" << filePath;
+    }
+
+    return success;
+}
+
 void DataController::deleteSelectedFolder()
 {
     if (m_selectedFolder) {
