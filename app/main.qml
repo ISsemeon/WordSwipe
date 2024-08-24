@@ -289,7 +289,7 @@ ApplicationWindow {
                     id: cardListView
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    layoutDirection: Qt.TopToBottom
+                    //layoutDirection: Qt.TopToBottom
                     spacing: 5
                     clip: true
                     model: dataController.selectedModule ? dataController.selectedModule.cardsModel : null
