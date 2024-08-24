@@ -19,6 +19,8 @@ public:
     };
 
     void addCard(const QSharedPointer<Card> &card);
+    void addCards(const QList<QSharedPointer<Card>> &cards);
+
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

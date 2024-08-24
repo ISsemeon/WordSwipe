@@ -37,3 +37,4 @@ void Module::addCard(const QString &question, const QString &answer) {
     m_cardsModel->addCard(card);
     emit cardsModelChanged();
 }
+

@@ -118,6 +118,20 @@ bool DataController::checkIfModuleHasUnfilledCards(const Module* module) const {
     return false;
 }
 
+CardsModel* DataController::getCardsModelInSelectedFolder() const {
+    if (m_selectedFolder) {
+        return m_selectedFolder->cardsModel(); // Возвращаем модель карточек для всей папки
+    }
+    return nullptr;
+}
+
+CardsModel* DataController::getCardsModelInSelectedModule() const {
+    if (m_selectedModule) {
+        return m_selectedModule->cardsModel(); // Возвращаем модель карточек для выбранного модуля
+    }
+    return nullptr;
+}
+
 bool DataController::importFolder(const QString &filePath) {
     // Используйте SessionManager для импорта папки
     QSharedPointer<Folder> importedFolder(new Folder);

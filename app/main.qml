@@ -240,7 +240,10 @@ ApplicationWindow {
                         text: "Study"
                         Layout.preferredHeight: 50
                         Layout.fillWidth: true
-                        onClicked: {}
+                        onClicked: {
+                            var studyPageInstance = stackView.push(studyPage);
+                            studyPageInstance.setStudyModel(dataController.getCardsModelInSelectedModule());
+                        }
                     }
 
                     Button {
@@ -285,19 +288,25 @@ ApplicationWindow {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     onTextChanged: {
-                                        model.question = questionField.text
+                                        if (questionField.text !== model.question) {
+                                            model.question = questionField.text
+                                        }
                                     }
                                 }
 
                                 TextField {
                                     id: answerField
-                                    text: model.answer
                                     placeholderText: qsTr("Translation")
+                                    text: model.answer
                                     font.pixelSize: 16
                                     color: "black"
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
-                                    onTextChanged: model.answer = answerField.text
+                                    onTextChanged: {
+                                        if (answerField.text !== model.answer) {
+                                            model.answer = answerField.text
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -342,7 +351,10 @@ ApplicationWindow {
                         text: "Study"
                         Layout.preferredHeight: 50
                         Layout.fillWidth: true
-                        onClicked: {}
+                        onClicked: {
+                            var studyPageInstance = stackView.push(studyPage);
+                            studyPageInstance.setStudyModel(dataController.getCardsModelInSelectedFolder());
+                        }
                     }
 
 
@@ -579,9 +591,92 @@ ApplicationWindow {
 
         }
     }
+
+    Component {
+        id: studyPage
+
+        Item {
+            id: studyItem
+            width: parent.width
+            height: parent.height
+
+            // Метод для установки модели
+            function setStudyModel(model) {
+                studyListView.model = model;
+            }
+
+            ColumnLayout {
+                anchors.fill: parent
+                spacing: 10
+                anchors.margins: 10
+
+                Text {
+                    id: studyTitle
+                    text: "Study Mode"
+                    font.pixelSize: 26
+                    font.bold: true
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                ListView {
+                    id: studyListView
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    layoutDirection: Qt.TopToBottom
+                    spacing: 5
+                    clip: true
+
+                    model: null  // Изначально модель не установлена
+
+                    delegate: Item {
+                        width: studyListView.width
+                        height: 120
+
+                        Rectangle {
+                            width: parent.width
+                            height: 120
+                            color: "lightgray"
+                            border.color: "black"
+                            border.width: 2
+                            radius: 5
+
+                            ColumnLayout {
+                                anchors.fill: parent
+                                anchors.margins: 10
+
+                                Text {
+                                    text: model.question
+                                    font.pixelSize: 18
+                                    color: "black"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                }
+
+                                Text {
+                                    text: model.answer
+                                    font.pixelSize: 16
+                                    color: "black"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Button {
+                    text: "Back"
+                    Layout.preferredHeight: 50
+                    Layout.fillWidth: true
+                    onClicked: stackView.pop()
+                }
+            }
+        }
+    }
+
     QtObject
     {
         id: guiController
-       }
+    }
 
 }

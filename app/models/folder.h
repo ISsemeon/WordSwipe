@@ -19,6 +19,8 @@ public:
     ModuleModel* modulesModel() ;  // Метод для доступа к модели модулей
     void addModule(const QString &name, const QString &color);
 
+    CardsModel* cardsModel() const;
+
 public slots:
     void removeModule(int index);
 

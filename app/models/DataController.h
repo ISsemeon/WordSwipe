@@ -33,6 +33,8 @@ public:
 
 
 
+
+
 public slots:
     void deleteSelectedModule();
     void deleteSelectedFolder();
@@ -54,6 +56,10 @@ public:
     Q_INVOKABLE void saveSession();
     Q_INVOKABLE void loadSession();
 
+
+    //for study mode
+    Q_INVOKABLE CardsModel* getCardsModelInSelectedFolder() const;
+    Q_INVOKABLE CardsModel* getCardsModelInSelectedModule() const;
 
 signals:
     void foldersModelChanged();

@@ -12,6 +12,20 @@ void CardsModel::addCard(const QSharedPointer<Card> &card)
     endInsertRows();
 }
 
+void CardsModel::addCards(const QList<QSharedPointer<Card>> &cards)
+{
+    if (cards.isEmpty()) {
+        return;
+    }
+
+    beginInsertRows(QModelIndex(), 0, cards.size() - 1);  // Добавляем несколько карточек
+    for (const auto &card : cards) {
+        m_cards.prepend(card);  // Добавляем карточки в начало списка
+    }
+    endInsertRows();
+}
+
+
 int CardsModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);

@@ -48,3 +48,15 @@ void Folder::addModule(const QString &name, const QString &color)
     m_modulesModel.addModule(module);  // Добавляем модуль через модель
     emit modulesModelChanged();  // Оповещаем об изменении модели
 }
+
+CardsModel* Folder::Folder::cardsModel() const {
+    auto combinedCardsModel = new CardsModel();
+
+    // Обходим все модули и собираем все карточки в одну модель
+    for (const auto &module : m_modulesModel.modules()) {
+        combinedCardsModel->addCards(module->cardsModel()->cards());
+    }
+
+    return combinedCardsModel;
+}
+
