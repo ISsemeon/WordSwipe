@@ -31,10 +31,6 @@ ApplicationWindow {
         ListElement { color: "lavender" }
     }
 
-    QtObject {
-        id: appStyle
-    }
-
     Component {
         id: mainPage
         Item {
@@ -243,6 +239,7 @@ ApplicationWindow {
                         onClicked: {
                             var studyPageInstance = stackView.push(studyPage);
                             studyPageInstance.setStudyModel(dataController.getCardsModelInSelectedModule());
+
                         }
                     }
 
@@ -288,25 +285,19 @@ ApplicationWindow {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     onTextChanged: {
-                                        if (questionField.text !== model.question) {
-                                            model.question = questionField.text
-                                        }
+                                        model.question = questionField.text
                                     }
                                 }
 
                                 TextField {
                                     id: answerField
-                                    placeholderText: qsTr("Translation")
                                     text: model.answer
+                                    placeholderText: qsTr("Translation")
                                     font.pixelSize: 16
                                     color: "black"
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
-                                    onTextChanged: {
-                                        if (answerField.text !== model.answer) {
-                                            model.answer = answerField.text
-                                        }
-                                    }
+                                    onTextChanged: model.answer = answerField.text
                                 }
                             }
                         }
@@ -592,6 +583,11 @@ ApplicationWindow {
         }
     }
 
+    CardRoles
+    {
+        id:cardRoles
+    }
+
     Component {
         id: studyPage
 
@@ -600,9 +596,23 @@ ApplicationWindow {
             width: parent.width
             height: parent.height
 
-            // Метод для установки модели
+            property int currentIndex: 0
+            property bool showingAnswer: false
+            property var cardsModel: null
+
             function setStudyModel(model) {
-                studyListView.model = model;
+                cardsModel = model;
+                currentIndex = 0;
+                updateCard();
+            }
+
+            function updateCard() {
+                if (cardsModel && currentIndex >= 0 && currentIndex < cardsModel.rowCount()) {
+                    var cardIndex = cardsModel.index(currentIndex, 0); // Получаем индекс для строки
+                    questionText.text = cardsModel.data(cardIndex, cardRoles.questionRole); // Используем роль для получения данных
+                    answerText.text = cardsModel.data(cardIndex, cardRoles.answerRole); // Используем роль для получения данных
+                    showingAnswer = false;
+                }
             }
 
             ColumnLayout {
@@ -618,48 +628,68 @@ ApplicationWindow {
                     Layout.alignment: Qt.AlignHCenter
                 }
 
-                ListView {
-                    id: studyListView
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    layoutDirection: Qt.TopToBottom
-                    spacing: 5
-                    clip: true
+                Rectangle {
+                    width: parent.width
+                    height: 120
+                    color: "lightgray"
+                    border.color: "black"
+                    border.width: 2
+                    radius: 5
 
-                    model: null  // Изначально модель не установлена
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 10
 
-                    delegate: Item {
-                        width: studyListView.width
-                        height: 120
-
-                        Rectangle {
-                            width: parent.width
-                            height: 120
-                            color: "lightgray"
-                            border.color: "black"
-                            border.width: 2
-                            radius: 5
-
-                            ColumnLayout {
+                        Text {
+                            id: questionText
+                            text: ""
+                            font.pixelSize: 18
+                            color: "black"
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            visible: !showingAnswer
+                            MouseArea {
                                 anchors.fill: parent
-                                anchors.margins: 10
-
-                                Text {
-                                    text: model.question
-                                    font.pixelSize: 18
-                                    color: "black"
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                }
-
-                                Text {
-                                    text: model.answer
-                                    font.pixelSize: 16
-                                    color: "black"
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
+                                onClicked: {
+                                    showingAnswer = !showingAnswer
                                 }
                             }
+                        }
+
+                        Text {
+                            id: answerText
+                            text: ""
+                            font.pixelSize: 16
+                            color: "black"
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            visible: showingAnswer
+                        }
+                    }
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+
+                    Button {
+                        text: "Previous"
+                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true
+                        enabled: currentIndex > 0
+                        onClicked: {
+                            currentIndex--;
+                            updateCard();
+                        }
+                    }
+
+                    Button {
+                        text: "Next"
+                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true
+                        enabled: currentIndex < (cardsModel.rowCount() - 1)
+                        onClicked: {
+                            currentIndex++;
+                            updateCard();
                         }
                     }
                 }

@@ -13,12 +13,12 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Set the path to Qt installation
+# Set the path to Qt installation (adjust if necessary)
 set(CMAKE_PREFIX_PATH "/Users/semyon/Qt/6.4.0/macos")
 
 # Find Qt libraries
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick )
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick )
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Qml)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Qml)
 
 # Define source files
 set(PROJECT_SOURCES
@@ -64,7 +64,7 @@ endif()
 
 # Link Qt libraries
 target_link_libraries(WordSwipe
-    PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick
+    PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Qml
 )
 
 # Set properties for macOS and Windows
