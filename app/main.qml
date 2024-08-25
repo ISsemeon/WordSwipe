@@ -583,9 +583,13 @@ ApplicationWindow {
         }
     }
 
-    CardRoles
+    QtObject
     {
         id:cardRoles
+
+        property int cardRole: Qt.UserRole + 1
+        property int questionRole: Qt.UserRole + 2
+        property int answerRole: Qt.UserRole + 3
     }
 
     Component {
@@ -620,52 +624,49 @@ ApplicationWindow {
                 spacing: 10
                 anchors.margins: 10
 
-                Text {
-                    id: studyTitle
-                    text: "Study Mode"
-                    font.pixelSize: 26
-                    font.bold: true
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
                 Rectangle {
                     width: parent.width
-                    height: 120
+                    height: 400
                     color: "lightgray"
                     border.color: "black"
                     border.width: 2
                     radius: 5
 
-                    ColumnLayout {
+                    MouseArea {
                         anchors.fill: parent
-                        anchors.margins: 10
-
-                        Text {
-                            id: questionText
-                            text: ""
-                            font.pixelSize: 18
-                            color: "black"
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            visible: !showingAnswer
-                            MouseArea {
-                                anchors.fill: parent
-                                onClicked: {
-                                    showingAnswer = !showingAnswer
-                                }
-                            }
-                        }
-
-                        Text {
-                            id: answerText
-                            text: ""
-                            font.pixelSize: 16
-                            color: "black"
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            visible: showingAnswer
+                        onClicked: {
+                            showingAnswer = !showingAnswer
                         }
                     }
+
+                    Text {
+                        id: questionText
+                        text: ""
+                        font.pixelSize: 32
+                        color: "black"
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        visible: !showingAnswer
+                        anchors.fill: parent
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        wrapMode: Text.Wrap
+                    }
+
+                    Text {
+                        id: answerText
+                        text: ""
+                        font.pixelSize: 32
+                        color: "black"
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        visible: showingAnswer
+                        anchors.fill: parent
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        wrapMode: Text.Wrap
+                    }
+
                 }
 
                 RowLayout {

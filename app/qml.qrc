@@ -1,10 +1,5 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>CardRoles.qml</file>
-        <file>FolderItem.qml</file>
-        <file>ModuleItem.qml</file>
-        <file>ColorItem.qml</file>
-        <file>CardItem.qml</file>
     </qresource>
 </RCC>
