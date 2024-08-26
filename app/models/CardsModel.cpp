@@ -1,4 +1,6 @@
 #include "CardsModel.h"
+#include <random>
+#include <algorithm>
 
 CardsModel::CardsModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -7,8 +9,9 @@ CardsModel::CardsModel(QObject *parent)
 
 void CardsModel::addCard(const QSharedPointer<Card> &card)
 {
-    beginInsertRows(QModelIndex(), 0, 0);  // Указываем, что новая строка будет вставлена в начало
-    m_cards.prepend(card);  // Добавляем карточку в начало списка
+    beginInsertRows(QModelIndex(), 0, 0);
+    m_cards.prepend(card);
+    m_indexMapping.append(m_indexMapping.size());  // Добавляем новый индекс в маппинг
     endInsertRows();
 }
 
@@ -18,13 +21,33 @@ void CardsModel::addCards(const QList<QSharedPointer<Card>> &cards)
         return;
     }
 
-    beginInsertRows(QModelIndex(), 0, cards.size() - 1);  // Добавляем несколько карточек
+    beginInsertRows(QModelIndex(), 0, cards.size() - 1);
     for (const auto &card : cards) {
-        m_cards.prepend(card);  // Добавляем карточки в начало списка
+        m_cards.prepend(card);
+        m_indexMapping.append(m_indexMapping.size());  // Добавляем индексы для новых карточек
     }
     endInsertRows();
 }
 
+void CardsModel::shuffle()
+{
+    if (m_cards.isEmpty()) return;
+
+    beginResetModel();  // Начинаем сброс модели для перемешивания
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(m_indexMapping.begin(), m_indexMapping.end(), g);  // Перемешиваем индексы
+    endResetModel();  // Заканчиваем сброс модели
+}
+
+void CardsModel::unshuffle()
+{
+    if (m_indexMapping.isEmpty()) return;
+
+    beginResetModel();  // Начинаем сброс модели для возврата исходного состояния
+    std::iota(m_indexMapping.begin(), m_indexMapping.end(), 0);  // Возвращаем индексы в исходное состояние
+    endResetModel();  // Заканчиваем сброс модели
+}
 
 int CardsModel::rowCount(const QModelIndex &parent) const
 {
@@ -34,10 +57,10 @@ int CardsModel::rowCount(const QModelIndex &parent) const
 
 QVariant CardsModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || index.row() >= m_cards.size())
+    if (!index.isValid() || index.row() >= m_indexMapping.size())
         return QVariant();
 
-    const auto &card = m_cards[index.row()];
+    const auto &card = m_cards[m_indexMapping[index.row()]];  // Используем маппинг для доступа к данным
 
     switch (role) {
     case CardRole:
@@ -53,10 +76,10 @@ QVariant CardsModel::data(const QModelIndex &index, int role) const
 
 bool CardsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (!index.isValid() || index.row() >= m_cards.size())
+    if (!index.isValid() || index.row() >= m_indexMapping.size())
         return false;
 
-    auto &card = m_cards[index.row()];
+    auto &card = m_cards[m_indexMapping[index.row()]];  // Используем маппинг для доступа к карточке
 
     switch (role) {
     case QuestionRole:
@@ -72,7 +95,7 @@ bool CardsModel::setData(const QModelIndex &index, const QVariant &value, int ro
     }
 }
 
-QList<QSharedPointer<Card> > CardsModel::cards() const
+QList<QSharedPointer<Card>> CardsModel::cards() const
 {
     return m_cards;
 }
