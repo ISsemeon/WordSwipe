@@ -3,7 +3,7 @@
 
 #include <QAbstractListModel>
 #include <QSharedPointer>
-#include "Card.h"
+#include "models/card.h"
 
 class CardsModel : public QAbstractListModel
 {

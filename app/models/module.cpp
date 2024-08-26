@@ -1,4 +1,4 @@
-#include "Module.h"
+#include "module.h"
 
 Module::Module(QObject *parent)
     : QObject(parent)

@@ -14,7 +14,14 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set the path to Qt installation (adjust if necessary)
-set(CMAKE_PREFIX_PATH "/Users/semyon/Qt/6.4.0/macos")
+# Conditionally set the path to Qt installation based on the operating system
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    # macOS
+    set(CMAKE_PREFIX_PATH "/Users/semyon/Qt/6.4.0/macos")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    # Linux
+    set(CMAKE_PREFIX_PATH "/home/simo/Qt/5.15.2/gcc_64")
+endif()
 
 # Find Qt libraries
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Qml)
@@ -28,8 +35,8 @@ set(PROJECT_SOURCES
     models/folder.cpp
     models/FolderModel.cpp
     models/FolderModel.h
-    models/cardsModel.h
-    models/cardsModel.cpp
+    models/CardsModel.h
+    models/CardsModel.cpp
     models/ModuleModel.cpp
     models/ModuleModel.h
     models/module.h

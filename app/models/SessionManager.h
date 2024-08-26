@@ -4,9 +4,9 @@
 #include <QJsonObject>
 #include <QDateTime>
 #include <QSharedPointer>
-#include "Folder.h"
-#include "Module.h"
-#include "Card.h"
+#include "folder.h"
+#include "module.h"
+#include "card.h"
 
 class SessionManager {
 public:
