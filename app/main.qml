@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Dialogs 1.3
+import QtQuick.Dialogs
 import Qt.labs.platform 1.1
 
 
@@ -601,22 +601,11 @@ ApplicationWindow {
             height: parent.height
 
             property int currentIndex: 0
-            property bool showingAnswer: false
             property var cardsModel: null
 
             function setStudyModel(model) {
                 cardsModel = model;
                 currentIndex = 0;
-                updateCard();
-            }
-
-            function updateCard() {
-                if (cardsModel && currentIndex >= 0 && currentIndex < cardsModel.rowCount()) {
-                    var cardIndex = cardsModel.index(currentIndex, 0); // Получаем индекс для строки
-                    questionText.text = cardsModel.data(cardIndex, cardRoles.questionRole); // Используем роль для получения данных
-                    answerText.text = cardsModel.data(cardIndex, cardRoles.answerRole); // Используем роль для получения данных
-                    showingAnswer = false;
-                }
             }
 
             ColumnLayout {
@@ -624,49 +613,57 @@ ApplicationWindow {
                 spacing: 10
                 anchors.margins: 10
 
-                Rectangle {
+
+                ListView {
+                    id: cardsListView
                     width: parent.width
                     height: 400
-                    color: "lightgray"
-                    border.color: "black"
-                    border.width: 2
-                    radius: 5
+                    model: cardsModel
 
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            showingAnswer = !showingAnswer
+                    spacing: 10
+                    clip: true
+
+
+                    delegate: Rectangle {
+                        width: cardsListView.width
+                        height: cardsListView.height
+
+                        color: "lightgray"
+                        border.color: "black"
+                        border.width: 2
+                        radius: 5
+
+                        property bool showingAnswer: false
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                showingAnswer = !showingAnswer
+                            }
+                        }
+
+                        Text {
+                            text: model.question
+                            font.pixelSize: 32
+                            color: "black"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            wrapMode: Text.Wrap
+                            visible: !showingAnswer
+                            anchors.fill: parent
+                        }
+
+                        Text {
+                            text: model.answer
+                            font.pixelSize: 32
+                            color: "black"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            wrapMode: Text.Wrap
+                            visible: showingAnswer
+                            anchors.fill: parent
                         }
                     }
-
-                    Text {
-                        id: questionText
-                        text: ""
-                        font.pixelSize: 32
-                        color: "black"
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        visible: !showingAnswer
-                        anchors.fill: parent
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        wrapMode: Text.Wrap
-                    }
-
-                    Text {
-                        id: answerText
-                        text: ""
-                        font.pixelSize: 32
-                        color: "black"
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        visible: showingAnswer
-                        anchors.fill: parent
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        wrapMode: Text.Wrap
-                    }
-
                 }
 
                 RowLayout {
@@ -676,10 +673,9 @@ ApplicationWindow {
                         text: "Previous"
                         Layout.preferredHeight: 50
                         Layout.fillWidth: true
-                        enabled: currentIndex > 0
+                        enabled: cardsListView.currentIndex > 0
                         onClicked: {
-                            currentIndex--;
-                            updateCard();
+                            cardsListView.currentIndex--;
                         }
                     }
 
@@ -687,10 +683,9 @@ ApplicationWindow {
                         text: "Next"
                         Layout.preferredHeight: 50
                         Layout.fillWidth: true
-                        enabled: currentIndex < (cardsModel.rowCount() - 1)
+                        enabled: cardsListView.currentIndex < (cardsModel.rowCount() - 1)
                         onClicked: {
-                            currentIndex++;
-                            updateCard();
+                            cardsListView.currentIndex++;
                         }
                     }
                 }

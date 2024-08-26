@@ -4,6 +4,8 @@ project(WordSwipe VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+set(CMAKE_INSTALL_PREFIX ${CMAKE_HOME_DIRECTORY}/install)
+
 # Enable automatic handling of UI, MOC, and RCC files
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -76,7 +78,7 @@ target_link_libraries(WordSwipe
 
 # Set properties for macOS and Windows
 set_target_properties(WordSwipe PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+    MACOSX_BUNDLE_GUI_IDENTIFIER com.mobility.wordSwipe
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
