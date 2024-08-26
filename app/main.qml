@@ -592,113 +592,129 @@ ApplicationWindow {
         property int answerRole: Qt.UserRole + 3
     }
 
-    Component {
-        id: studyPage
+Component {
+    id: studyPage
 
-        Item {
-            id: studyItem
-            width: parent.width
-            height: parent.height
+    Item {
+        id: studyItem
+        width: parent.width
+        height: parent.height
 
-            property int currentIndex: 0
-            property var cardsModel: null
+        property int currentIndex: 0
+        property var cardsModel: null
 
-            function setStudyModel(model) {
-                cardsModel = model;
-                currentIndex = 0;
-            }
+        function setStudyModel(model) {
+            cardsModel = model;
+            currentIndex = 0;
+        }
 
-            ColumnLayout {
-                anchors.fill: parent
+        ColumnLayout {
+            anchors.fill: parent
+            spacing: 10
+            anchors.margins: 10
+
+            ListView {
+                id: cardsListView
+                width: parent.width
+                height: 400
+                model: cardsModel
                 spacing: 10
-                anchors.margins: 10
+                clip: true
+                interactive:false
 
+                delegate: Rectangle {
+                    width: cardsListView.width
+                    height: cardsListView.height
 
-                ListView {
-                    id: cardsListView
-                    width: parent.width
-                    height: 400
-                    model: cardsModel
+                    color: "lightgray"
+                    border.color: "black"
+                    border.width: 2
+                    radius: 5
 
-                    spacing: 10
-                    clip: true
+                    property bool showingAnswer: false
 
-
-                    delegate: Rectangle {
-                        width: cardsListView.width
-                        height: cardsListView.height
-
-                        color: "lightgray"
-                        border.color: "black"
-                        border.width: 2
-                        radius: 5
-
-                        property bool showingAnswer: false
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                showingAnswer = !showingAnswer
-                            }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            showingAnswer = !showingAnswer
                         }
+                    }
 
-                        Text {
-                            text: model.question
-                            font.pixelSize: 32
-                            color: "black"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            wrapMode: Text.Wrap
-                            visible: !showingAnswer
-                            anchors.fill: parent
-                        }
+                    Text {
+                        text: model.question
+                        font.pixelSize: 32
+                        color: "black"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        wrapMode: Text.Wrap
+                        visible: !showingAnswer
+                        anchors.fill: parent
+                    }
 
-                        Text {
-                            text: model.answer
-                            font.pixelSize: 32
-                            color: "black"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            wrapMode: Text.Wrap
-                            visible: showingAnswer
-                            anchors.fill: parent
-                        }
+                    Text {
+                        text: model.answer
+                        font.pixelSize: 32
+                        color: "black"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        wrapMode: Text.Wrap
+                        visible: showingAnswer
+                        anchors.fill: parent
                     }
                 }
+            }
 
-                RowLayout {
+            RowLayout {
+                Layout.fillWidth: true
+
+                Button {
+                    text: "Previous"
+                    Layout.preferredHeight: 50
                     Layout.fillWidth: true
-
-                    Button {
-                        text: "Previous"
-                        Layout.preferredHeight: 50
-                        Layout.fillWidth: true
-                        enabled: cardsListView.currentIndex > 0
-                        onClicked: {
-                            cardsListView.currentIndex--;
-                        }
-                    }
-
-                    Button {
-                        text: "Next"
-                        Layout.preferredHeight: 50
-                        Layout.fillWidth: true
-                        enabled: cardsListView.currentIndex < (cardsModel.rowCount() - 1)
-                        onClicked: {
-                            cardsListView.currentIndex++;
-                        }
+                    enabled: cardsListView.currentIndex > 0
+                    onClicked: {
+                        cardsListView.currentIndex--;
                     }
                 }
 
                 Button {
-                    text: "Back"
+                    text: "Next"
                     Layout.preferredHeight: 50
                     Layout.fillWidth: true
-                    onClicked: stackView.pop()
+                    enabled: cardsListView.currentIndex < (cardsListView.model.rowCount() - 1)
+                    onClicked: {
+                        cardsListView.currentIndex++;
+                    }
                 }
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+
+                Button {
+                    text: "Shuffle"
+                    Layout.preferredHeight: 50
+                    Layout.fillWidth: true
+                    onClicked: cardsModel.shuffle()
+                }
+
+                Button {
+                    text: "Unshuffle"
+                    Layout.preferredHeight: 50
+                    Layout.fillWidth: true
+                    onClicked: cardsModel.unshuffle()
+                }
+            }
+
+            Button {
+                text: "Back"
+                Layout.preferredHeight: 50
+                Layout.fillWidth: true
+                onClicked: stackView.pop()
             }
         }
     }
+}
 
     QtObject
     {
