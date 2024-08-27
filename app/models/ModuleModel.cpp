@@ -69,7 +69,7 @@ QHash<int, QByteArray> ModuleModel::roleNames() const {
 }
 
 void ModuleModel::addModule(const QSharedPointer<Module> &module) {
-    beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    m_modules.append(module);
+    beginInsertRows(QModelIndex(), 0, 0);
+    m_modules.prepend(module);
     endInsertRows();
 }
