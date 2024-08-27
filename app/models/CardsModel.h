@@ -3,8 +3,6 @@
 
 #include <QAbstractListModel>
 #include <QSharedPointer>
-#include <algorithm>
-#include <random>
 #include "models/card.h"
 
 class CardsModel : public QAbstractListModel
@@ -26,9 +24,13 @@ public:
     Q_INVOKABLE void shuffle();
     Q_INVOKABLE void unshuffle();
 
+    // Методы фильтрации
+    Q_INVOKABLE void setFilter(const QString &filter);
+    Q_INVOKABLE void clearFilter();
+
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+    QVariant data(const QModelIndex &index, int role) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
 
     QList<QSharedPointer<Card>> cards() const;
 
@@ -39,6 +41,12 @@ protected:
 private:
     QList<QSharedPointer<Card>> m_cards;
     QList<int> m_indexMapping;  // Маппинг индексов для перемешивания
+
+    // Переменные для фильтрации
+    QString m_filter;
+    QList<int> m_filteredIndices;
+
+    void applyFilter();
 };
 
 #endif // CARDSMODEL_H

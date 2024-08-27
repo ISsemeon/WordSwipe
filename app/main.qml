@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Dialogs
+import QtQuick.Dialogs 1.0
 import Qt.labs.platform 1.1
 
 
@@ -205,6 +205,23 @@ ApplicationWindow {
                 spacing: 20
                 anchors.margins: 20
 
+                TextField {
+                    id: search
+                    placeholderText: qsTr("search")
+                    font.pixelSize: 18
+                    color: "black"
+                    Layout.fillWidth: true
+                    // Layout.fillHeight: true
+                    onTextChanged: {
+                        //model.question = questionField.
+                        var model = dataController.selectedModule ? dataController.selectedModule.cardsModel : null
+                        if(model)
+                        {
+                            model.setFilter(search.text)
+                        }
+                    }
+                }
+
                 RowLayout {
                     spacing: 20
                     Layout.fillWidth: true
@@ -239,7 +256,6 @@ ApplicationWindow {
                         onClicked: {
                             var studyPageInstance = stackView.push(studyPage);
                             studyPageInstance.setStudyModel(dataController.getCardsModelInSelectedModule());
-
                         }
                     }
 
@@ -703,7 +719,7 @@ ApplicationWindow {
                         text: "Next"
                         Layout.preferredHeight: 50
                         Layout.fillWidth: true
-                        enabled: cardsListView.currentIndex < (cardsListView.model.rowCount() - 1)
+                        enabled: cardsListView.currentIndex < (cardsModel.rowCount() - 1)
                         onClicked: {
                             cardsListView.currentIndex++;
                         }

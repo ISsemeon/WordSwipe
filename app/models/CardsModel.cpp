@@ -13,6 +13,7 @@ void CardsModel::addCard(const QSharedPointer<Card> &card)
     m_cards.prepend(card);
     m_indexMapping.append(m_indexMapping.size());  // Добавляем новый индекс в маппинг
     endInsertRows();
+    applyFilter();  // Применяем фильтр после добавления карточки
 }
 
 void CardsModel::addCards(const QList<QSharedPointer<Card>> &cards)
@@ -27,6 +28,7 @@ void CardsModel::addCards(const QList<QSharedPointer<Card>> &cards)
         m_indexMapping.append(m_indexMapping.size());  // Добавляем индексы для новых карточек
     }
     endInsertRows();
+    applyFilter();  // Применяем фильтр после добавления карточек
 }
 
 void CardsModel::shuffle()
@@ -38,6 +40,7 @@ void CardsModel::shuffle()
     std::mt19937 g(rd());
     std::shuffle(m_indexMapping.begin(), m_indexMapping.end(), g);  // Перемешиваем индексы
     endResetModel();  // Заканчиваем сброс модели
+    applyFilter();  // Применяем фильтр после перемешивания
 }
 
 void CardsModel::unshuffle()
@@ -47,20 +50,21 @@ void CardsModel::unshuffle()
     beginResetModel();  // Начинаем сброс модели для возврата исходного состояния
     std::iota(m_indexMapping.begin(), m_indexMapping.end(), 0);  // Возвращаем индексы в исходное состояние
     endResetModel();  // Заканчиваем сброс модели
+    applyFilter();  // Применяем фильтр после возврата индексов
 }
 
 int CardsModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return m_cards.size();
+    return m_filteredIndices.size();  // Количество строк теперь зависит от отфильтрованных индексов
 }
 
 QVariant CardsModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || index.row() >= m_indexMapping.size())
+    if (!index.isValid() || index.row() >= m_filteredIndices.size())
         return QVariant();
 
-    const auto &card = m_cards[m_indexMapping[index.row()]];  // Используем маппинг для доступа к данным
+    const auto &card = m_cards[m_filteredIndices[index.row()]];  // Используем отфильтрованные индексы для доступа к данным
 
     switch (role) {
     case CardRole:
@@ -76,10 +80,10 @@ QVariant CardsModel::data(const QModelIndex &index, int role) const
 
 bool CardsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (!index.isValid() || index.row() >= m_indexMapping.size())
+    if (!index.isValid() || index.row() >= m_filteredIndices.size())
         return false;
 
-    auto &card = m_cards[m_indexMapping[index.row()]];  // Используем маппинг для доступа к карточке
+    auto &card = m_cards[m_filteredIndices[index.row()]];  // Используем отфильтрованные индексы для доступа к карточке
 
     switch (role) {
     case QuestionRole:
@@ -95,9 +99,41 @@ bool CardsModel::setData(const QModelIndex &index, const QVariant &value, int ro
     }
 }
 
-QList<QSharedPointer<Card>> CardsModel::cards() const
+void CardsModel::setFilter(const QString &filter)
 {
-    return m_cards;
+    m_filter = filter;
+    applyFilter();  // Применяем фильтр при его изменении
+}
+
+void CardsModel::clearFilter()
+{
+    m_filter.clear();
+    applyFilter();  // Применяем сброс фильтра
+}
+
+void CardsModel::applyFilter()
+{
+    beginResetModel();  // Начинаем сброс модели
+
+    m_filteredIndices.clear();  // Очищаем список отфильтрованных индексов
+
+    if (m_filter.isEmpty()) {
+        // Если фильтра нет, показываем все карточки
+        m_filteredIndices = m_indexMapping;
+    } else {
+        // Фильтрация на основе вопроса и ответа
+        for (int i = 0; i < m_indexMapping.size(); ++i) {
+            const auto &card = m_cards[m_indexMapping[i]];
+
+            // Проверяем, начинается ли вопрос или ответ с фильтра
+            if (card->question().startsWith(m_filter, Qt::CaseInsensitive) ||
+                card->answer().startsWith(m_filter, Qt::CaseInsensitive)) {
+                m_filteredIndices.append(m_indexMapping[i]);
+            }
+        }
+    }
+
+    endResetModel();  // Завершаем сброс модели
 }
 
 QHash<int, QByteArray> CardsModel::roleNames() const
@@ -115,4 +151,9 @@ Qt::ItemFlags CardsModel::flags(const QModelIndex &index) const
         return Qt::NoItemFlags;
 
     return Qt::ItemIsEditable | QAbstractListModel::flags(index);
+}
+
+QList<QSharedPointer<Card>> CardsModel::cards() const
+{
+    return m_cards;
 }

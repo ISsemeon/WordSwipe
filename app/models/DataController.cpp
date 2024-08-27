@@ -120,14 +120,18 @@ bool DataController::checkIfModuleHasUnfilledCards(const Module* module) const {
 
 CardsModel* DataController::getCardsModelInSelectedFolder() const {
     if (m_selectedFolder) {
-        return m_selectedFolder->cardsModel(); // Возвращаем модель карточек для всей папки
+        auto model = m_selectedFolder->cardsModel();
+        model->clearFilter();
+        return  model;
     }
     return nullptr;
 }
 
 CardsModel* DataController::getCardsModelInSelectedModule() const {
     if (m_selectedModule) {
-        return m_selectedModule->cardsModel(); // Возвращаем модель карточек для выбранного модуля
+        auto model = m_selectedModule->cardsModel();
+        model->clearFilter();
+        return  model;
     }
     return nullptr;
 }
