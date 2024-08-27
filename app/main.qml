@@ -205,6 +205,14 @@ ApplicationWindow {
                 spacing: 20
                 anchors.margins: 20
 
+                Text {
+                    id: folderNameText
+                    text: dataController.selectedModule ? dataController.selectedModule.name : "No Folder Selected"
+                    font.pixelSize: 26
+                    font.bold: true
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
                 TextField {
                     id: search
                     placeholderText: qsTr("search")
