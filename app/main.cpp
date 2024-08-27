@@ -7,8 +7,8 @@
 
 QString getSessionFilePath() {
     // Path for storing the file on mobile devices
-    #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-        return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/session.json";
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+    return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/session.json";
     #else
         return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/session.json";
     #endif

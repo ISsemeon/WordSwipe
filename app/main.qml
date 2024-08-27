@@ -1,7 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Dialogs 1.0
+import QtQuick.Dialogs
+
 import Qt.labs.platform 1.1
 
 
@@ -636,33 +637,6 @@ ApplicationWindow {
                 anchors.fill: parent
                 anchors.margins:20
 
-                RowLayout
-                {
-                    Rectangle
-                    {
-                        id: unstudyedprewCards
-                        Layout.preferredWidth: 50
-                        Layout.preferredHeight: 50
-
-                        color: "red"
-
-                    }
-
-                    Item {
-                        Layout.fillWidth: true
-                    }
-
-                    Rectangle
-                    {
-                        id: studyedPrewCards
-                        Layout.preferredWidth: 50
-                        Layout.preferredHeight: 50
-
-                        color: "green"
-                    }
-
-                }
-
                 ListView {
                     id: cardsListView
 
@@ -675,7 +649,7 @@ ApplicationWindow {
                     clip: true
                     interactive:false
 
-                    highlightMoveVelocity : 600
+                    highlightMoveVelocity : 300
 
                     onCurrentIndexChanged:
                     {
@@ -697,30 +671,22 @@ ApplicationWindow {
                         width: cardsListView.width
                         height: cardsListView.height
 
-                        property bool unstudyed: false
-
                         color: "lightgray"
                         border.color: "black"
                         border.width: 2
                         radius: 5
 
-                        Text {
-                            text: {
-                                if (cardsModel) {
-                                    return index + "/" + cardsModel.rowCount()
-                                } else {
-                                    return "No data"
-                                }
+                        MouseArea
+                        {
+                            anchors.fill: parent
+
+                            onClicked:
+                            {
+                                cardsListView.showingAnswer = !cardsListView.showingAnswer
                             }
-                            font.pixelSize: 25
-                            color: "lightgrey"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            wrapMode: Text.Wrap
-                            anchors.top: parent.top
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.topMargin: 20
                         }
+
+
 
                         Text {
                             text: model.question
@@ -763,7 +729,7 @@ ApplicationWindow {
                             Layout.fillWidth: true
                             onClicked:
                             {
-                                console.log("index: ", cardsListView.currentIndex)
+                                cardsListView.currentIndex--
                             }
                             anchors.bottom: parent.bottom
                             anchors.horizontalCenter: parent.horizontalCenter
