@@ -73,6 +73,8 @@ QVariant CardsModel::data(const QModelIndex &index, int role) const
         return card->question();
     case AnswerRole:
         return card->answer();
+    case RecordedRole:
+        return card->recorded();
     default:
         return QVariant();
     }
@@ -94,6 +96,10 @@ bool CardsModel::setData(const QModelIndex &index, const QVariant &value, int ro
         card->setAnswer(value.toString());
         emit dataChanged(index, index, {AnswerRole});
         return true;
+    case RecordedRole:
+        card->setRecorded(value.toBool());
+        emit dataChanged(index, index, {RecordedRole});
+        return true;
     default:
         return false;
     }
@@ -109,6 +115,44 @@ void CardsModel::clearFilter()
 {
     m_filter.clear();
     applyFilter();  // Применяем сброс фильтра
+}
+
+void CardsModel::applyRecordedFilter()
+{
+    beginResetModel();
+
+    // Очищаем предыдущий фильтр
+    m_filteredIndices.clear();
+
+    // Проходим по всем карточкам и добавляем только те, у которых recorded == false
+    for (int i = 0; i < m_cards.size(); ++i) {
+        if (!m_cards[i]->recorded()) {
+            m_filteredIndices.append(i);
+        }
+    }
+
+    endResetModel();
+}
+
+void CardsModel::resetRecordedFilter()
+{
+    beginResetModel();
+
+    // Устанавливаем recorded = false для всех карточек
+    for (auto &card : m_cards) {
+        card->setRecorded(false);
+    }
+
+    // Очищаем фильтр, чтобы показать все карточки
+    m_filteredIndices.clear();
+    for (int i = 0; i < m_cards.size(); ++i) {
+        m_filteredIndices.append(i);
+    }
+
+    endResetModel();
+
+    // Уведомляем представление, что данные изменились
+    emit dataChanged(index(0, 0), index(rowCount() - 1, 0));
 }
 
 void CardsModel::applyFilter()
@@ -142,6 +186,7 @@ QHash<int, QByteArray> CardsModel::roleNames() const
     roles[CardRole] = "card";
     roles[QuestionRole] = "question";
     roles[AnswerRole] = "answer";
+    roles[RecordedRole] = "recorded";
     return roles;
 }
 

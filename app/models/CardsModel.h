@@ -15,7 +15,8 @@ public:
     enum CardRoles {
         CardRole = Qt::UserRole + 1,
         QuestionRole,
-        AnswerRole
+        AnswerRole,
+        RecordedRole  // Added RecordedRole to the roles
     };
 
     void addCard(const QSharedPointer<Card> &card);
@@ -27,6 +28,8 @@ public:
     // Методы фильтрации
     Q_INVOKABLE void setFilter(const QString &filter);
     Q_INVOKABLE void clearFilter();
+    Q_INVOKABLE void applyRecordedFilter();
+    Q_INVOKABLE void resetRecordedFilter();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;

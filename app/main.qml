@@ -279,7 +279,7 @@ ApplicationWindow {
                     id: cardListView
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    layoutDirection: Qt.TopToBottom
+                    //layoutDirection: Qt.TopToBottom
                     spacing: 5
                     clip: true
                     model: dataController.selectedModule ? dataController.selectedModule.cardsModel : null
@@ -634,8 +634,35 @@ ApplicationWindow {
 
             ColumnLayout {
                 anchors.fill: parent
-                spacing: 10
-                anchors.margins: 10
+                anchors.margins:20
+
+                RowLayout
+                {
+                    Rectangle
+                    {
+                        id: unstudyedprewCards
+                        Layout.preferredWidth: 50
+                        Layout.preferredHeight: 50
+
+                        color: "red"
+
+                    }
+
+                    Item {
+                        Layout.fillWidth: true
+                    }
+
+                    Rectangle
+                    {
+                        id: studyedPrewCards
+                        Layout.preferredWidth: 50
+                        Layout.preferredHeight: 50
+
+                        color: "green"
+
+                    }
+
+                }
 
                 ListView {
                     id: cardsListView
@@ -643,11 +670,22 @@ ApplicationWindow {
                     property bool showingAnswer: false
 
                     width: parent.width
-                    height: 400
+                    Layout.preferredHeight: 500
                     model: cardsModel
                     spacing: 10
                     clip: true
                     interactive:false
+
+                    highlightMoveVelocity : 600
+
+                    onCurrentIndexChanged:
+                    {
+                        if(currentIndex === cardsModel.rowCount())
+                        {
+                            currentIndex = 0;
+                            cardsModel.applyRecordedFilter();
+                        }
+                    }
 
                     delegate: Rectangle {
 
@@ -655,18 +693,12 @@ ApplicationWindow {
                         width: cardsListView.width
                         height: cardsListView.height
 
+                        property bool unstudyed: false
+
                         color: "lightgray"
                         border.color: "black"
                         border.width: 2
                         radius: 5
-
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                cardsListView.showingAnswer = !cardsListView.showingAnswer
-                            }
-                        }
 
                         Text {
                             text: {
@@ -677,7 +709,7 @@ ApplicationWindow {
                                 }
                             }
                             font.pixelSize: 25
-                            color: "black"
+                            color: "lightgrey"
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                             wrapMode: Text.Wrap
@@ -707,32 +739,50 @@ ApplicationWindow {
                             visible: cardsListView.showingAnswer
                             anchors.fill: parent
                         }
+
+                        Button {
+                            text: "-"
+                            Layout.preferredHeight: 50
+                            Layout.fillWidth: true
+                            onClicked: {
+                                model.recorded = false;
+                                cardsListView.currentIndex++;
+                            }
+                            anchors.bottom: parent.bottom
+                            anchors.left: parent.left
+                            anchors.margins: 20
+                        }
+
+                        Button {
+                            text: "Prev"
+                            Layout.preferredHeight: 50
+                            Layout.fillWidth: true
+                            onClicked:
+                            {
+                                console.log("index: ", cardsListView.currentIndex)
+                            }
+                            anchors.bottom: parent.bottom
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.margins: 20
+                        }
+
+
+                        Button {
+                            text: "+"
+                            Layout.preferredHeight: 50
+                            Layout.fillWidth: true
+                            onClicked: {
+                                model.recorded = true;
+                                console.log("index: ", cardsListView.currentIndex)
+                                cardsListView.currentIndex++;
+                            }
+                            anchors.bottom: parent.bottom
+                            anchors.right: parent.right
+                            anchors.margins: 20
+                        }
                     }
                 }
 
-                RowLayout {
-                    Layout.fillWidth: true
-
-                    Button {
-                        text: "Previous"
-                        Layout.preferredHeight: 50
-                        Layout.fillWidth: true
-                        enabled: cardsListView.currentIndex > 0
-                        onClicked: {
-                            cardsListView.currentIndex--;
-                        }
-                    }
-
-                    Button {
-                        text: "Next"
-                        Layout.preferredHeight: 50
-                        Layout.fillWidth: true
-                        enabled: cardsListView.currentIndex < (cardsModel.rowCount() - 1)
-                        onClicked: {
-                            cardsListView.currentIndex++;
-                        }
-                    }
-                }
 
                 RowLayout {
                     Layout.fillWidth: true

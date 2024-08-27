@@ -1,15 +1,16 @@
-// card.cpp
 #include "card.h"
 
 Card::Card(QObject *parent)
     : QObject(parent)
+    , m_recorded(false) // Initialize recorded to false
 {
 }
 
-Card::Card(const QString &question, const QString &answer, QObject *parent)
+Card::Card(const QString &question, const QString &answer, bool recorded, QObject *parent)
     : QObject(parent)
     , m_question(question)
     , m_answer(answer)
+    , m_recorded(recorded)
 {
 }
 
@@ -36,5 +37,18 @@ void Card::setAnswer(const QString &answer)
     if (m_answer != answer) {
         m_answer = answer;
         emit answerChanged();
+    }
+}
+
+bool Card::recorded() const
+{
+    return m_recorded;
+}
+
+void Card::setRecorded(bool recorded)
+{
+    if (m_recorded != recorded) {
+        m_recorded = recorded;
+        emit recordedChanged();
     }
 }
