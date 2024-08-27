@@ -659,7 +659,6 @@ ApplicationWindow {
                         Layout.preferredHeight: 50
 
                         color: "green"
-
                     }
 
                 }
@@ -684,6 +683,11 @@ ApplicationWindow {
                         {
                             currentIndex = 0;
                             cardsModel.applyRecordedFilter();
+                        }
+                        if(cardsModel.rowCount() === 0)
+                        {
+                            cardsModel.resetRecordedFilter();
+                            stackView.pop();
                         }
                     }
 
